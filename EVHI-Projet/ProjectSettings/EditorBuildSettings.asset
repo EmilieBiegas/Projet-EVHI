@@ -6,12 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/QCM.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: ef0e2f8cc9078aa49b024b79c5a9cecf
   - enabled: 1
+    path: Assets/Scenes/QCM.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
     path: Assets/Scenes/MenuParametres.unity
     guid: beea287c7385b1b4ea10c12d32040a14
+  - enabled: 1
+    path: Assets/Scenes/MenuUtilisateurs.unity
+    guid: b72925149d89f3c4caa2c0c811e4b7ed
   m_configObjects: {}

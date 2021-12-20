@@ -36,10 +36,13 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\ReponseScript.cs" />
-     <Compile Include="Assets\QuestionReponse.cs" />
-     <Compile Include="Assets\QuizManager.cs" />
-     <Compile Include="Assets\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\ReponseScript.cs" />
+     <Compile Include="Assets\Scripts\QuestionReponse.cs" />
+     <Compile Include="Assets\Scripts\QuizManager.cs" />
+     <Compile Include="Assets\Scripts\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\VocabUtilisateur.cs" />
+     <Compile Include="Assets\Scripts\CsvReader.cs" />
+     <Compile Include="Assets\Scripts\FicheManager.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.24f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
