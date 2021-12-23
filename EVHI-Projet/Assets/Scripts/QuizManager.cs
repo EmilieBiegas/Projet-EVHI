@@ -65,9 +65,11 @@ public class QuizManager : MonoBehaviour
         // genererQuestion(); // PB après l'initialisation
     }
 
+    // Fonction appellée lorsque l'utilisateur répond à un QCM
     public void ReponduQCM(bool correct){ // correct vaut true si l'utilisateur a donné la bonne réponse et false sinon
         // Calcul de la vitesse de clic de l'utilisateur
         timer.Stop();
+        vocUt.dateDerniereRencontre[QuestionCourrante] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"); // On met à jour la date de dernière rencontre du mot
         TimeSpan timeTaken = timer.Elapsed;
         // PB pour l affichage : OK c'est bien le temps de sélection !
         string foo = "Temps de sélection: " + timeTaken.ToString(@"m\:ss\.fff"); // PB Attention, timeTaken est un string mtn
@@ -80,7 +82,6 @@ public class QuizManager : MonoBehaviour
         NbQuestionsTotales += 1; // On indique que l'on a rencontré une question de plus
         NbAncienneQuestion = NbAncienneQuestionTemp; // On màj le NbAncienneQuestion mtn que l'utilisateur a répondu
         vocUt.UpdateProbaAcquisitionQCM(QuestionCourrante, correct, 1); // On met à jour les probas d'acquisition // PB paramètre hésite à changer
-        vocUt.dateDerniereRencontre[QuestionCourrante] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"); // On met à jour la date de dernière rencontre
 
         // On affiche la bonne réponse en vert et les autres en rouge
         for (int i = 0; i < options.Length; i++)
@@ -106,9 +107,11 @@ public class QuizManager : MonoBehaviour
         FicheButtonQCM.SetActive (true);
     }
 
+    // Fonction appellée lorsque l'utilisateur répond à une question à réponse entière
     public void ReponduEntier(){
         // Calcul de la vitesse d'entrée de texte de l'utilisateur
         timer.Stop();
+        vocUt.dateDerniereRencontre[QuestionCourrante] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"); // On met à jour la date de dernière rencontre du mot
         TimeSpan timeTaken = timer.Elapsed;
         // PB pour l affichage : OK c'est bien le temps d'entrée de texte et le nombre de caractères entrés !
         string foo = "Temps d'entrée de texte: " + timeTaken.ToString(@"m\:ss\.fff") + "sur " + nbCarRep + " caractères"; // PB Attention, timeTaken est un string mtn
@@ -124,22 +127,22 @@ public class QuizManager : MonoBehaviour
         {
             UnityEngine.Debug.Log("BONNE REPONSE !");
             vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, true, 1); // On met à jour les probas d'acquisition // PB paramètre hésite à changer
-            RepEntreeOK = true;
+            RepEntreeOK = true; // On indique que l'utilisateur a donné la bonne réponse
             // Change la couleur du bouton (en mode non cliquable)
             var colors = EntreeRep.GetComponent<InputField>().colors;
             colors.disabledColor = correctCol;
             EntreeRep.GetComponent<InputField>().colors = colors;
-            // Rendre le champs de saisie non cliquable
+            // Rendre le champs de saisie et le bouton OK non cliquable
             EntreeRep.GetComponent<InputField>().interactable = false;
             OkButton.GetComponent<Button>().interactable = false;
         }else
         {
             UnityEngine.Debug.Log("MAUVAISE REPONSE !");
             vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, false, 1); // On met à jour les probas d'acquisition // PB paramètre hésite à changer
-            RepEntreeOK = false;
-            IncrementeNbQuestAvantNouvelle(); // PB on augmente le renforcemment des connaissances
+            RepEntreeOK = false; // On indique que l'utilisateur a donné la mauvaise réponse
+            IncrementeNbQuestAvantNouvelle(); // PB on augmente le renforcemment des connaissances (càd augmenter le nombre de questions déjà vues nécessaires avant une nouvelle question)
 
-            // On met la réponse rentrée en rouge et on affiche un deuxième carré contenant la bonne réponse
+            // On met la réponse rentrée en rouge et on affiche un deuxième carré contenant la bonne réponse en vert
             var colors = EntreeRep.GetComponent<InputField>().colors;
             colors.disabledColor = wrongCol;
             EntreeRep.GetComponent<InputField>().colors = colors;
@@ -148,17 +151,15 @@ public class QuizManager : MonoBehaviour
             colors.disabledColor = correctCol;
             BonneRep.GetComponent<InputField>().colors = colors;
 
-            // Afficher le bouton bonne réponse dans ce cas contenant la bonne réponse
+            // Afficher le bouton bonne réponse contenant la bonne réponse dans ce cas 
             BonneRep.SetActive(true);
             BonneRep.GetComponent<InputField>().text = QnA[QuestionCourrante].ReponseCorrecte;
 
-            // Rendre le champs de saisie et le bouton OK non cliquable
+            // Rendre les champs de saisie et le bouton OK non cliquable
             EntreeRep.GetComponent<InputField>().interactable = false;
             BonneRep.GetComponent<InputField>().interactable = false;
             OkButton.GetComponent<Button>().interactable = false;
         }
-
-        vocUt.dateDerniereRencontre[QuestionCourrante] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"); // On met à jour la date de dernière rencontre
 
         // On affiche les boutons "suivant" permettant de passer à la question suivante et "fiche d'aide" permettant de consulter la fiche
         NextButtonEntier.SetActive (true);
@@ -166,15 +167,16 @@ public class QuizManager : MonoBehaviour
     }
 
 
+    // Appellée lorsqu'on souhaite passer à la question suivante (à l'appui du bouton "suivant")
     public void questionSuivante(){
-        // On cache les boutons fiche, suivant et bonne réponse
+        // On cache les boutons fiche, suivant et bonne réponse (dans le cas QCM comme Entier)
         NextButtonQCM.SetActive (false);
         FicheButtonQCM.SetActive (false);
         NextButtonEntier.SetActive (false);
         FicheButtonEntier.SetActive (false);
         BonneRep.SetActive(false);
 
-        // On réactive les 4 boutons de choix et le champs de saisie de réponse
+        // On réactive les 4 boutons de choix (pour QCM), le champs de saisie de réponse et le bouton OK (pour Entier)
         for (int i = 0; i < options.Length; i++)
         {
             // Rendre les boutons cliquables de nouveau
@@ -183,6 +185,7 @@ public class QuizManager : MonoBehaviour
         EntreeRep.GetComponent<InputField>().interactable = true;
         OkButton.GetComponent<Button>().interactable = true;
         
+        // On affiche la question suivante (en fonction de si on est dans l'initialisation ou non avec un QCM ou non)
         if (inInitialisation)
         {
             if (inQCM)
@@ -201,6 +204,7 @@ public class QuizManager : MonoBehaviour
         }
     }
 
+    // Fonction permettant de choisir une question et de la générer
     void genererQuestion(){
         /** PB Choisir la question posée */
         if (NbAncienneQuestion < NbQuestAvantNouvelle)
@@ -213,6 +217,7 @@ public class QuizManager : MonoBehaviour
             float[] probaAcquisActuelles = new float[nbMotVocab];
             probaAcquisActuelles = vocUt.UpdateProbaAcquisitionPowLawPrac();
 
+            // On cherche l'indice de la question avec la plus faible proba d'acquisition actuelle
             var minProba = -1.0;
             var minInd = -1;
             for (int i = 0; i < nbMotVocab; i++)
@@ -241,9 +246,9 @@ public class QuizManager : MonoBehaviour
 
         }else
         {
-            NbAncienneQuestionTemp = 0; // On réinitialise le nombre de questions déjà posées sur des mots déjà rencontrés
-
             // Dans ce cas, on pose une question sur un mot non encore rencontré
+            NbAncienneQuestionTemp = 0; // On réinitialise le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'une nouvelle question
+            
             List<int> IndQuestNonRencontrees = new List<int>(); // Indices des questions non encores posées
             // PB pour gain de temps, on peut plutot initialiser a tous les indices et les enlever a chaque fois qu'on rencontre une nouvelle question
             for (int i = 0; i < nbMotVocab; i++)
@@ -266,6 +271,7 @@ public class QuizManager : MonoBehaviour
                 float[] probaAcquisActuelles = new float[nbMotVocab];
                 probaAcquisActuelles = vocUt.UpdateProbaAcquisitionPowLawPrac();
 
+                // On cherche l'indice de la question avec la plus faible proba d'acquisition actuelle
                 var minProba = -1.0;
                 var minInd = -1;
                 // On choisit la question avec la proba d'acquisition la plus faible parmi toutes
@@ -316,7 +322,7 @@ public class QuizManager : MonoBehaviour
 
        
 
-        // Teste si la question a déjà été posée et que l'utilisateur avait bien répondu à ce moment, on propose d'entrée la réponse entièrement //PB a changer plus tard
+        // Si la question a déjà été rencontrée et que l'utilisateur avait bien répondu à ce moment là, on propose alors la question sous forme Entier (et pas QCM) //PB a changer plus tard
         if (vocUt.nbRencontres[QuestionCourrante] > 0 && vocUt.probaAcquisition[QuestionCourrante] > 0.75) 
         {
             TypeQuestion = "Entier";
@@ -325,20 +331,23 @@ public class QuizManager : MonoBehaviour
             TypeQuestion = "QCM";
         }
 
+        // On affiche la question sélectionnée
         afficherPanneauEnFctTypeQuestion();
     }
 
+    // Fonction permettant d'afficher la question sélectionnée et de lancer le chronomètre de temps de réponse
     void afficherPanneauEnFctTypeQuestion(){
-        if(TypeQuestion == "QCM"){ 
+        if(TypeQuestion == "QCM"){  // La question choisie est un QCM
+            // On affiche le panneau de QCM et pas de question Entier
             PanneauQEntier.SetActive(false);
             PanneauQCM.SetActive(true);
 
-            //QuestionCourrante = UnityEngine.Random.Range(0, QnA.Count); //Une question aléatoire entre 0 et le nb de questions
             TxtQuestionQCM.text = "Traduisez le mot : \n" + QnA[QuestionCourrante].Question; //La question est bien celle sélectionnée
-            genererReponses();
+            genererReponses(); // On génère les réponses possibles de ce QCM
         }else
         {
-            // Question dont la réponse doit être entrée entièrement
+            // La question choisie est une question dont la réponse doit être entrée entièrement
+            // On affiche le panneau de question Entier et pas de QCM
             PanneauQEntier.SetActive(true);
             PanneauQCM.SetActive(false);
 
@@ -356,6 +365,7 @@ public class QuizManager : MonoBehaviour
         timer.Start();
     }
 
+    // Fonction permettant de générer les réponses pour le QCM et de leur associer la véracité de la réponse
     void genererReponses(){
         for (int i = 0; i < options.Length; i++)
         {
@@ -368,7 +378,7 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    // Fonctions d'affichage de la fiche d'aide
+    // Fonction d'affichage de la fiche d'aide
     public void AfficherFiche(){
         if (TypeQuestion == "QCM")
         {
@@ -376,12 +386,14 @@ public class QuizManager : MonoBehaviour
         }else
         {
             PanneauFicheEntier.SetActive(true);
-            // On doit cacher le champs de saisie de réponse, le camps de la bonne réponse et le bouton OK
+            // On doit cacher le champs de saisie de réponse, le champs de la bonne réponse et le bouton OK
             EntreeRep.SetActive(false);
             OkButton.SetActive(false);
             BonneRep.SetActive(false);
         }
     }
+
+    // Fonction pour cacher la fiche d'aide
     public void CacherFiche(){
         if (TypeQuestion == "QCM")
         {
@@ -392,6 +404,7 @@ public class QuizManager : MonoBehaviour
             // On doit faire réapparaître le champs de saisie de réponse et le bouton OK
             EntreeRep.SetActive(true);
             OkButton.SetActive(true);
+            // On doit aussi faire réapparaître le champs de la bonne réponse si il était précedemment affiché (càd si l'utilisateur avait mal répondu)
             if (RepEntreeOK == false)
             {
                 BonneRep.SetActive(true); // Le réafficher seulement si on avait entré une mauvaise réponse                
@@ -400,17 +413,19 @@ public class QuizManager : MonoBehaviour
     }
 
     // Fonctions des questions sans choix (on doit entrer la réponse à la main)
-    public void inputBetValue(InputField userInput)
+    public void inputBetValue(InputField userInput) // Fonction permettant de lire la saisie de l'utilisateur
     {
         ReponseUtilisateur = userInput.text;
         nbCarRep = userInput.text.Length;
         // UnityEngine.Debug.Log(userInput.text);
     }
 
+    // Fonction pour incrémenter le nombre d'ancienne question rencontré
     public void IncrementeNbQuestAvantNouvelle(){ // PB peut etre ajouter des détails comme la taille de 10 dans le cahier des charges
         NbQuestAvantNouvelle += 1;
     }
 
+    // Des attributs pour l'initialisation
     private int nbBienRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à la même question en entier
     private int nbMalRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à mal répondu à la même question en entier
     private int numIte; // Numéro de l'itération dans l'initialisation
@@ -422,12 +437,14 @@ public class QuizManager : MonoBehaviour
         UnityEngine.Debug.Log("Initialisation ite " + numIte + " avec nbBienRep = " + nbBienRep + "et nbMalRep = " + nbMalRep);
 
         // PB sauvegarder les données d'hésitation de l'utilisateur grâce à cette initialisation
+        // On fait l'initialisation jusqu'à ce que l'on ai rencontré une fois les deux cas de figure ou jusqu'à un nombre défini d'itération
         if((nbBienRep < 1 || nbMalRep < 1) && numIte <= nbIteMax) // PB ajouter un nbr d'itération max qd même
         {
             UnityEngine.Debug.Log("Iteration " + numIte + " QCM");
             TypeQuestion = "QCM";
             QuestionCourrante = ((int)numIte*(nbMotVocab-1)/nbIteMax); // On prend des mots espacés dans la base de question (du mot numéro 0 au dernier d'indice (nbMotVocab-1) puisque les indices commencent à 0)
             
+            // On affiche la question choisie
             afficherPanneauEnFctTypeQuestion();
         }else
         {
@@ -439,22 +456,25 @@ public class QuizManager : MonoBehaviour
         numIte += 1;  
     }
 
+    // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à un QCM
     void InitialisationReponduQCM(){
         if (RepEntreeOK)
-        { // Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
+        { // PB Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
             UnityEngine.Debug.Log("Iteration " + numIte + " a répondu au QCM CORRECTEMENT");
             // Si l'utilisateur clique sur la bonne réponse, on lui repose la question sous forme d'écriture complète
             TypeQuestion = "Entier";
             // On garde la même QuestionCourrante
 
+            // On affiche la question choisie
             afficherPanneauEnFctTypeQuestion();
         }else{
             UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu au QCM");
-            // Si l'utilisateur répond faux c'est qu'il hésitait (à prendre en compte même si il répond faux au QCM)
+            // Si l'utilisateur répond faux c'est qu'il hésitait (PB à prendre en compte même si il répond faux au QCM)
             Initialisation(); // On continue l'initialisation
         }
     }
 
+    // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à une question à réponse entière
     void InitialisationReponduEntier(){
         UnityEngine.Debug.Log("Iteration " + numIte + " Entier");
         if (RepEntreeOK)
@@ -469,7 +489,7 @@ public class QuizManager : MonoBehaviour
         Initialisation(); // On continue l'initialisation
     }
 
-    void Update()
+    void Update() // Fonction appelée toute les frame
     {
         if (TypeQuestion == "Entier")
         {
@@ -484,6 +504,7 @@ public class QuizManager : MonoBehaviour
     // Fonction appelée lors de l'ouverture de la scène QCM
     void OnEnable()
     {
+        // On charge les données sauvegardées
         UnityEngine.Debug.Log("ON ENABLE QuizManager : ON LOAD DATA");
 
         // Chargement des données de l'utilisateur en question
@@ -493,17 +514,18 @@ public class QuizManager : MonoBehaviour
             UnityEngine.Debug.Log("Joueur en train de jouer : " + NumJoueur);
 
             // PB on a changé Userstat en mettant direct les probaAcquis, nbRencontre et dateDerniereRencontre plutot que'un vocabUtilisateur
-            //UserStats loadedData = new UserStats(); 
-            //loadedData.vocabUtilisateur = gameObject.AddComponent(typeof(VocabUtilisateur)) as VocabUtilisateur; // loadedData.vocabUtilisateur = new VocabUtilisateur();
-            // On charge les données du joueur concerné // PB HERE en cours
+            // PB UserStats loadedData = new UserStats(); 
+            // PB loadedData.vocabUtilisateur = gameObject.AddComponent(typeof(VocabUtilisateur)) as VocabUtilisateur; // loadedData.vocabUtilisateur = new VocabUtilisateur();
+            
+            // On charge les données du joueur concerné 
             UserStats loadedData = DataSaver.loadData<UserStats>("Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
             // UnityEngine.Debug.Log("PASSE LE LOAD, loadedData = " + loadedData);
-            if (loadedData == null )// PB || loadedData.vocabUtilisateur == null)
+            if (loadedData == null )// PB || loadedData.vocabUtilisateur == null) // ou ""
             {
                 UnityEngine.Debug.Log("PAS DE DATA A LOAD");
                 UnityEngine.Debug.Log("Aucune donnée associée à ce joueur pour l'instant");
-                // On initialise les données de vocabulaire de l'utilisateur PB à faire seulement si c'est un nouveau joueur
+                // On initialise les données de vocabulaire de l'utilisateur
                 vocUt.Initialise();
                 return;
             }
@@ -518,12 +540,15 @@ public class QuizManager : MonoBehaviour
 
             Array.Copy(loadedData.probaAcquisition, vocUt.probaAcquisition, nbMotVocab);
             Array.Copy(loadedData.nbRencontres, vocUt.nbRencontres, nbMotVocab);
+            // PB sans copy : vocUt.nbRencontres = loadedData.nbRencontres;
+            // PB sans copy : vocUt.dateDerniereRencontre = loadedData.dateDerniereRencontre;
+
             // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre == null " + loadedData.dateDerniereRencontre == null);
             // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre = " + loadedData.dateDerniereRencontre);
             // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre.Length = " + loadedData.dateDerniereRencontre.Length);
             for (int i = 0; i < nbMotVocab; i++)
             {
-                if (loadedData.dateDerniereRencontre[i] != null)
+                if (loadedData.dateDerniereRencontre[i] != null) // On ne charge que les données qui existent (les autres restent vides mais on ne les consultera pas donc pas de problèmes)
                 {
                     vocUt.dateDerniereRencontre[i] = loadedData.dateDerniereRencontre[i]; 
                     // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + loadedData.dateDerniereRencontre[i]);
@@ -534,8 +559,6 @@ public class QuizManager : MonoBehaviour
                     UnityEngine.Debug.Log("loadedData.dateDerniereRencontre[" + i + "] est null");
                 } 
             }
-            // PB sans copy : vocUt.nbRencontres = loadedData.nbRencontres;
-            // PB sans copy : vocUt.dateDerniereRencontre = loadedData.dateDerniereRencontre;
 
             // Affichage des données chargées
             for (int i = 0; i < nbMotVocab; i++)
@@ -562,4 +585,4 @@ public class QuizManager : MonoBehaviour
     }
 }
 
-//PB Enlever les Debug
+//PB Enlever les Debug et les PB
