@@ -553,13 +553,12 @@ MonoBehaviour:
   options:
   - {fileID: 2046138518}
   - {fileID: 1293379419}
-  - {fileID: 650495916}
   - {fileID: 1642905025}
+  - {fileID: 650495916}
   QuestionCourrante: 0
   TxtQuestionQCM: {fileID: 1371414768}
   TxtQuestionEnt: {fileID: 334862628}
   CsvLu: {fileID: 518164036}
-  textData: {fileID: 4900000, guid: eff413b2f40a8c64c9756adf0d7262ca, type: 3}
   vocUt: {fileID: 1164000565}
   NextButtonQCM: {fileID: 1507020629}
   FicheButtonQCM: {fileID: 1086665660}
@@ -572,6 +571,11 @@ MonoBehaviour:
   OkButton: {fileID: 988365260}
   EntreeRep: {fileID: 721556485}
   BonneRep: {fileID: 694619419}
+  inInitialisation: 0
+  RepEntreeOK: 0
+  NbQuestAvantNouvelle: 1
+  NbAncienneQuestion: 0
+  NbQuestionsTotales: 0
 --- !u!4 &192715050
 Transform:
   m_ObjectHideFlags: 0
@@ -618,8 +622,8 @@ RectTransform:
   - {fileID: 824501001}
   - {fileID: 2046138519}
   - {fileID: 1293379420}
-  - {fileID: 650495917}
   - {fileID: 1642905026}
+  - {fileID: 650495917}
   - {fileID: 1562530231}
   - {fileID: 1507020630}
   - {fileID: 1086665661}
@@ -1098,7 +1102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecab23583364a49458814054c83fb4e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textAssetData: {fileID: 0}
+  textAssetData: {fileID: 4900000, guid: eff413b2f40a8c64c9756adf0d7262ca, type: 3}
   myQr: []
 --- !u!4 &518164037
 Transform:
@@ -1389,7 +1393,7 @@ RectTransform:
   m_Children:
   - {fileID: 64452391}
   m_Father: {fileID: 192802002}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2746,6 +2750,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   probaAcquisition: []
   nbRencontres: 
+  dateDerniereRencontre: []
 --- !u!4 &1164000566
 Transform:
   m_ObjectHideFlags: 0
@@ -3025,7 +3030,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 650495922}
+      - m_Target: {fileID: 1293379425}
         m_TargetAssemblyTypeName: ReponseScript, Assembly-CSharp
         m_MethodName: ReponseQCM
         m_Mode: 1
@@ -4462,7 +4467,7 @@ RectTransform:
   m_Children:
   - {fileID: 94985790}
   m_Father: {fileID: 192802002}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4513,7 +4518,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 650495922}
+      - m_Target: {fileID: 1642905031}
         m_TargetAssemblyTypeName: ReponseScript, Assembly-CSharp
         m_MethodName: ReponseQCM
         m_Mode: 1
@@ -4914,7 +4919,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 650495922}
+      - m_Target: {fileID: 2046138524}
         m_TargetAssemblyTypeName: ReponseScript, Assembly-CSharp
         m_MethodName: ReponseQCM
         m_Mode: 1

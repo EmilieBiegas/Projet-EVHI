@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+// using System.Collections;
+// using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
 using System.Text;
 
+// Classe permettant de sauvegarder les données contenant beaucoup de variables (comme des instances de UserStats)
 public class DataSaver
 {
     //Save Data

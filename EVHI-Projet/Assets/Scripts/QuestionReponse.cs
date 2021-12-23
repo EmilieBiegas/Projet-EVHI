@@ -1,4 +1,5 @@
-[System.Serializable]
+[System.Serializable] 
+// Classe représentant les question / réponses
 public class QuestionReponse
 {
     public string Question;
@@ -6,8 +7,3 @@ public class QuestionReponse
     public int IndReponseCorrecte; // Attention, commence à 0
     public string ReponseCorrecte;
 }
-
-// [System.Serializable]
-// public class QuestionReponseList{
-//     public QuestionReponse[] ListQuestionReponses;
-// }
