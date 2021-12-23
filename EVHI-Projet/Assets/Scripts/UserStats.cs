@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-// Classe permettant de rassembler les données à stocker dans un seul type
+// Classe permettant de rassembler les données à stocker concernant les statistiques du joueur dans un seul type
 public class UserStats
 {
     public float[] probaAcquisition; // PB Défini le tableau de probabilité d'acquisition de chaque mot de vocabulaire

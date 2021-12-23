@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 // Classe permettant de gérer le menu principal
 public class MainMenu : MonoBehaviour
 {
-    public GameObject vocabUt; // Pour la sauvegarde des données qui s'effectue lorsque l'on revient au menu depuis une question
+    public GameObject vocabUt; // Pour la sauvegarde des données statistiques qui s'effectue lorsque l'on revient au menu depuis une question
+    public GameObject quizManager; // Pour la sauvegarde des données d'initialisation qui s'effectue lorsque l'on revient au menu depuis une question
     private const int nbMotVocab = 6; // PB Le nombre de mots de vocabulaires disponibles
     public void PlayGame(int NumJ){ // Associé au bouton jouer
         PlayerPrefs.SetInt("NumJoueur", NumJ); // On précise quel joueur joue pour pouvoir récupérer ses données et définir les données de ce joueur
@@ -39,23 +40,40 @@ public class MainMenu : MonoBehaviour
     public void BackMenuFromQuestion(){ // Appelée lorsque l'on retourne au menu principal depuis une question, on sauvegarde à ce moment les données du joueur
         UnityEngine.Debug.Log("DANS BACK MENU, ON SAVE DATA :");
 
-        // On enregistre les données utilisateur
-        UserStats saveData = new UserStats();
-        
+        // On enregistre les données statistique utilisateur
+        UserStats saveDataStat = new UserStats();
         // PB on doit enregistrer toutes les stats
-        saveData.probaAcquisition = vocabUt.GetComponents<VocabUtilisateur>()[0].probaAcquisition; // PB pq [0] ??
-        saveData.nbRencontres = vocabUt.GetComponents<VocabUtilisateur>()[0].nbRencontres;
-        saveData.dateDerniereRencontre = vocabUt.GetComponents<VocabUtilisateur>()[0].dateDerniereRencontre;
+        saveDataStat.probaAcquisition = vocabUt.GetComponents<VocabUtilisateur>()[0].probaAcquisition; // PB pq [0] ??
+        saveDataStat.nbRencontres = vocabUt.GetComponents<VocabUtilisateur>()[0].nbRencontres;
+        saveDataStat.dateDerniereRencontre = vocabUt.GetComponents<VocabUtilisateur>()[0].dateDerniereRencontre;
+        // Sauvegarde des données de UserStats dans un fichier nommé Stats_Joueur suivi du numéro du joueur
+        DataSaver.saveData(saveDataStat, "Stats_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
-        // Sauvegarde des données de UserStats dans un fichier nommé Joueur suivi du numéro du joueur
-        DataSaver.saveData(saveData, "Joueur" + PlayerPrefs.GetInt("NumJoueur"));
+
+        // On enregistre les données d'initialisation utilisateur
+        UserInitialisation saveDataInit = new UserInitialisation();
+        // PB on doit enregistrer toutes les stats
+        saveDataInit.nbBienRep = quizManager.GetComponent<QuizManager>().nbBienRep;
+        saveDataInit.nbMalRep = quizManager.GetComponent<QuizManager>().nbMalRep;
+        saveDataInit.numIte  = quizManager.GetComponent<QuizManager>().numIte;
+        saveDataInit.inInitialisation  = quizManager.GetComponent<QuizManager>().inInitialisation;
+        saveDataInit.RepEntreeOK  = quizManager.GetComponent<QuizManager>().RepEntreeOK;
+        saveDataInit.NbQuestAvantNouvelle  = quizManager.GetComponent<QuizManager>().NbQuestAvantNouvelle;
+        saveDataInit.NbAncienneQuestion  = quizManager.GetComponent<QuizManager>().NbAncienneQuestion;
+        saveDataInit.NbQuestionsTotales  = quizManager.GetComponent<QuizManager>().NbQuestionsTotales;
+        saveDataInit.inQCM  = quizManager.GetComponent<QuizManager>().inQCM;
+        saveDataInit.QuestionCourrante  = quizManager.GetComponent<QuizManager>().QuestionCourrante;
+        saveDataInit.TypeQuestion  = quizManager.GetComponent<QuizManager>().TypeQuestion;
+        saveDataInit.NbAncienneQuestionTemp  = quizManager.GetComponent<QuizManager>().NbAncienneQuestionTemp;
+        // Sauvegarde des données de UserInitialisation dans un fichier nommé Initialisation_Joueur suivi du numéro du joueur
+        DataSaver.saveData(saveDataInit, "Initialisation_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
         // Affichage des données sauvegardées
         for (int i = 0; i < nbMotVocab; i++)
         {
             // UnityEngine.Debug.Log("Proba d'acquisition [" + i + "] =" + saveData.probaAcquisition[i]);
             // UnityEngine.Debug.Log("Nb rencontres [" + i + "] =" + saveData.nbRencontres[i]);
-            if (saveData.dateDerniereRencontre[i] != null) // PB Attention, dateDerniereRencontre peut être null ou vide ""
+            if (saveDataStat.dateDerniereRencontre[i] != null) // PB Attention, dateDerniereRencontre peut être null ou vide ""
             {
                 // DateTime copyDateDerniereRencontre = saveData.dateDerniereRencontre[i]; // Pour ne pas transformer saveData.dateDerniereRencontre[i] en string
                 // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + saveData.dateDerniereRencontre[i]);

@@ -107,7 +107,8 @@ public class MenuUtilisateur : MonoBehaviour
     
     public void EffaceDonnees(){ // Associée au bouton d'écrasement des données utilisateur
         // On efface toutes les données du joueur en question
-        DataSaver.deleteData("Joueur" + NumJoueur); // Efface les statistiques du joueur
+        DataSaver.deleteData("Stats_Joueur" + NumJoueur); // Efface les statistiques du joueur
+        DataSaver.deleteData("Initialisation_Joueur" + NumJoueur); // Efface les données d'initialisation du joueur
         PlayerPrefs.DeleteKey("PseudoJ" + NumJoueur); // Efface son pseudo
 
         // On se rend sur la page de choix d'utilisateur (en cachant le warning)

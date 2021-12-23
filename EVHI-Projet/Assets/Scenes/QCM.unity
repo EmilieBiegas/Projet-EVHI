@@ -575,7 +575,13 @@ MonoBehaviour:
   RepEntreeOK: 0
   NbQuestAvantNouvelle: 1
   NbAncienneQuestion: 0
+  NbAncienneQuestionTemp: 0
   NbQuestionsTotales: 0
+  inQCM: 0
+  TypeQuestion: 
+  nbBienRep: 0
+  nbMalRep: 0
+  numIte: 0
 --- !u!4 &192715050
 Transform:
   m_ObjectHideFlags: 0
@@ -965,6 +971,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  quizManager: {fileID: 0}
 --- !u!114 &478694624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2171,6 +2178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  quizManager: {fileID: 0}
 --- !u!114 &974579206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3139,6 +3147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 1164000564}
+  quizManager: {fileID: 192715048}
 --- !u!4 &1326499836
 Transform:
   m_ObjectHideFlags: 0
@@ -4059,6 +4068,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  quizManager: {fileID: 0}
 --- !u!1 &1563345399
 GameObject:
   m_ObjectHideFlags: 0
@@ -4113,6 +4123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  quizManager: {fileID: 0}
 --- !u!114 &1563345402
 MonoBehaviour:
   m_ObjectHideFlags: 0

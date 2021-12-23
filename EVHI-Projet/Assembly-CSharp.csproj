@@ -45,8 +45,9 @@
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\MenuUtilisateur.cs" />
      <Compile Include="Assets\Scripts\VocabUtilisateur.cs" />
-     <Compile Include="Assets\Scripts\CsvReader.cs" />
      <Compile Include="Assets\Scripts\HesitationManager.cs" />
+     <Compile Include="Assets\Scripts\CsvReader.cs" />
+     <Compile Include="Assets\Scripts\UserInitialisation.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.24f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

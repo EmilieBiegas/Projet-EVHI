@@ -97,7 +97,7 @@ public class VocabUtilisateur : MonoBehaviour
 
                 // On applique la fonction choisie (ici, courbe de l'oubli)
                 float ValApresFct = CourbeOubli(floatTimeSpan[i], nbRencontres[i]);
-                UnityEngine.Debug.Log("Après courbe de l'oubli : " + CourbeOubli(floatTimeSpan[i], nbRencontres[i]) + "avec proba acquis donne :" + ValApresFct*probaAcquisition[i]);
+                // UnityEngine.Debug.Log("Après courbe de l'oubli : " + CourbeOubli(floatTimeSpan[i], nbRencontres[i]) + "avec proba acquis donne :" + ValApresFct*probaAcquisition[i]);
                 // UnityEngine.Debug.Log("Après courbe de l'oubli +1: " + CourbeOubli(floatTimeSpan[i], nbRencontres[i]+1));
                 // UnityEngine.Debug.Log("Après courbe de l'oubli +2: " + CourbeOubli(floatTimeSpan[i], nbRencontres[i]+2));
                 // UnityEngine.Debug.Log("Après courbe de l'oubli +3: " + CourbeOubli(floatTimeSpan[i], nbRencontres[i]+3)); // OK ça a bien l'allure souhaitée
@@ -106,7 +106,7 @@ public class VocabUtilisateur : MonoBehaviour
                 newProbaAcquisition[i] = ValApresFct * probaAcquisition[i]; // On prend également en compte la proba d'acquisition déjà établie au dernier temps de rencontre du mot
             }else
             {
-                UnityEngine.Debug.Log("dateDerniereRencontre[" + i + "] est null ou vide");
+                // UnityEngine.Debug.Log("dateDerniereRencontre[" + i + "] est null ou vide");
                 // Dans ce cas, aucun changement pour la proba d'acquisition
             }      
         }

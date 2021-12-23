@@ -31,18 +31,18 @@ public class QuizManager : MonoBehaviour
     public bool inInitialisation; // Indique si on est encore dans l'initialisation (true) ou non (false)
     public bool RepEntreeOK; // Indique si la réponse entrée est bonne (true) ou non (false)
     // PB il faut mémoriser NbQuestAvantNouvelle, NbAncienneQuestion et le nbr de questions totales surement
-    public int NbQuestAvantNouvelle = 1; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré
+    public int NbQuestAvantNouvelle; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré
     // PB a modifier au cours du temps et du NbQuestionsTotales
-    public int NbAncienneQuestion = 0; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
-    private int NbAncienneQuestionTemp; // Pour permettre de mettre à jour NbAncienneQuestion que quand l'utilisateur a répondu et pas avant (s'il a juste vu la question)
-    public int NbQuestionsTotales = 0; // Le nombre de questions rencontrées au total // PB ou depuis la dernière màj de NbQuestAvantNouvelle?
-    private bool inQCM; // Indique si la question à laquelle on vient de répondre est un QCM (true) ou non (false)
+    public int NbAncienneQuestion; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
+    public int NbAncienneQuestionTemp; // Pour permettre de mettre à jour NbAncienneQuestion que quand l'utilisateur a répondu et pas avant (s'il a juste vu la question)
+    public int NbQuestionsTotales; // Le nombre de questions rencontrées au total // PB ou depuis la dernière màj de NbQuestAvantNouvelle?
+    public bool inQCM; // Indique si la question à laquelle on vient de répondre est un QCM (true) ou non (false)
     private Stopwatch timer; // Le chronomètre permettant de mesurer le temps de sélection ou d'entrée de texte de l'utilisateur
     private string ReponseUtilisateur; // La réponse entrée par l'utilisateur lors d'une question à réponse entière
-    private string TypeQuestion; // Le type de la question en cours (QCM ou Entier)
+    public string TypeQuestion; // Le type de la question en cours (QCM ou Entier)
     private int nbCarRep; // Le nombre de caractères entrés par l'utilisateur pour sa réponse en champs de saisie lors d'une question à réponse entière
     private const int nbMotVocab = 6; // PB Le nombre de mots de vocabulaires disponibles // PB a changer = QnA.Count à tester dans Start ? et chercher QnA.Count remplacer par nbMotVocab
-
+    private bool loadAnciennePartie; // Booléen qui indique si on a load une ancienne partie (true) ou non (false)
     // PB il y a d'autres attributs plus bas au dessus de l'initialisation
     void Start(){ // Pour l'initialisation
         // On commence par lire le CSV contenant les mots de vocabulaire
@@ -54,18 +54,26 @@ public class QuizManager : MonoBehaviour
 
         // Pour le calcul de la vitesse de sélection 
         timer = new Stopwatch();
+        
+        Initialisation();
+    }
+
+    // Fonction permettant d'initialiser les valeurs des attributs pour l'initialisation dans le cas d'un tout nouveau joueur
+    void InitialiseUserInitialisation(){
+        // On initialise les attributs caractérisant la dynamique du quiz
+        NbQuestAvantNouvelle = 1; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré
+        NbAncienneQuestion = 0; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
+        NbQuestionsTotales = 0; // Le nombre de questions rencontrées au total // PB ou depuis la dernière màj de NbQuestAvantNouvelle?
 
         // Instantiation des variables pour l'initialisation
         nbBienRep = 0; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à la même question en entier
         nbMalRep = 0; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à mal répondu à la même question en entier
         numIte = 0; // Numéro de l'itération dans l'initialisation
 
-        inInitialisation = true; // On commence l'initialisation // PB ça dépend de l'avancée du joueur !
-        Initialisation();
-        // genererQuestion(); // PB après l'initialisation
+        inInitialisation = true; // On commence l'initialisation 
     }
 
-    // Fonction appellée lorsque l'utilisateur répond à un QCM
+    // Fonction appellée lorsque l'utilisateur vient de répondre à un QCM
     public void ReponduQCM(bool correct){ // correct vaut true si l'utilisateur a donné la bonne réponse et false sinon
         // Calcul de la vitesse de clic de l'utilisateur
         timer.Stop();
@@ -102,12 +110,18 @@ public class QuizManager : MonoBehaviour
                 options[i].GetComponent<Button>().colors = colors;
             }
         }
+
+        if (inInitialisation && RepEntreeOK == false)
+        {
+            numIte += 1; // L'utilisateur a fini de répondre à cette question et on peut donc incrémenter le numéro de l'itération de l'initialisation
+        }
+
         // On affiche les boutons "suivant" permettant de passer à la question suivante et "fiche d'aide" permettant de consulter la fiche
         NextButtonQCM.SetActive (true);
         FicheButtonQCM.SetActive (true);
     }
 
-    // Fonction appellée lorsque l'utilisateur répond à une question à réponse entière
+    // Fonction appellée lorsque l'utilisateur vient de répondre à une question à réponse entière
     public void ReponduEntier(){
         // Calcul de la vitesse d'entrée de texte de l'utilisateur
         timer.Stop();
@@ -161,6 +175,21 @@ public class QuizManager : MonoBehaviour
             OkButton.GetComponent<Button>().interactable = false;
         }
 
+        if (inInitialisation)
+        {
+            numIte += 1; // L'utilisateur a fini de répondre à cette question et on peut donc incrémenter le numéro de l'itération de l'initialisation
+            UnityEngine.Debug.Log("Iteration " + numIte + " Entier");
+            if (RepEntreeOK)
+            {
+                UnityEngine.Debug.Log("Iteration " + numIte + " a répondu à la question entière CORRECTEMENT");
+                nbBienRep += 1;
+            }else
+            {
+                UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu à la question entière");
+                nbMalRep += 1;
+            }
+        }
+        
         // On affiche les boutons "suivant" permettant de passer à la question suivante et "fiche d'aide" permettant de consulter la fiche
         NextButtonEntier.SetActive (true);
         FicheButtonEntier.SetActive (true);
@@ -195,7 +224,7 @@ public class QuizManager : MonoBehaviour
             }else
             {
                 UnityEngine.Debug.Log("Répondu à la question entière");
-                InitialisationReponduEntier();
+                Initialisation(); // On continue l'initialisation
             }
             
         }else
@@ -206,6 +235,7 @@ public class QuizManager : MonoBehaviour
 
     // Fonction permettant de choisir une question et de la générer
     void genererQuestion(){
+        UnityEngine.Debug.Log("On génère normalement désormais");
         /** PB Choisir la question posée */
         if (NbAncienneQuestion < NbQuestAvantNouvelle)
         {
@@ -426,9 +456,9 @@ public class QuizManager : MonoBehaviour
     }
 
     // Des attributs pour l'initialisation
-    private int nbBienRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à la même question en entier
-    private int nbMalRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à mal répondu à la même question en entier
-    private int numIte; // Numéro de l'itération dans l'initialisation
+    public int nbBienRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à la même question en entier
+    public int nbMalRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à mal répondu à la même question en entier
+    public int numIte; // Numéro de l'itération dans l'initialisation
     public void Initialisation(){ // Permet de faire l'initialisation afin de cibler le niveau de l'utilisateur en lui posant les premières questions
         // PB prévoir une sauvegarde si l'utilisateur quitte avant la fin de l'initialisation (on doit récupérer bcp de choses : nbBienRep, nbMalRep, numIte, inQCM, ...)
         var nbIteMax = 4; // Nombre maximum d'itérations avant de génerer les questions "normalement" 
@@ -440,23 +470,44 @@ public class QuizManager : MonoBehaviour
         // On fait l'initialisation jusqu'à ce que l'on ai rencontré une fois les deux cas de figure ou jusqu'à un nombre défini d'itération
         if((nbBienRep < 1 || nbMalRep < 1) && numIte <= nbIteMax) // PB ajouter un nbr d'itération max qd même
         {
-            UnityEngine.Debug.Log("Iteration " + numIte + " QCM");
-            TypeQuestion = "QCM";
-            QuestionCourrante = ((int)numIte*(nbMotVocab-1)/nbIteMax); // On prend des mots espacés dans la base de question (du mot numéro 0 au dernier d'indice (nbMotVocab-1) puisque les indices commencent à 0)
+            UnityEngine.Debug.Log("Toujours dans initialisation");
+            if (loadAnciennePartie)
+            {
+                loadAnciennePartie = false; // On a chargé la dernière partie, c'est bon 
+                UnityEngine.Debug.Log("On LOAD une ancienne partie");
+                if (inQCM && RepEntreeOK) // Dans ce cas on doit poser la même question que la dernière rencontrée en entier
+                {
+                    // Si l'utilisateur clique sur la bonne réponse, on lui repose la question sous forme d'écriture complète
+                    TypeQuestion = "Entier";
+                    // On garde la même QuestionCourrante
+
+                    // On affiche la question choisie
+                    afficherPanneauEnFctTypeQuestion();
+                }else // Si on a mal répondu au QCM ou que la dernière question était une question entière, on pose un nouveau QCM
+                {
+                    Initialisation();
+                }
+            }else
+            {
+                // Sinon, on commence toujours par poser la question sous forme de QCM
+                UnityEngine.Debug.Log("Iteration " + numIte + " QCM");
+                TypeQuestion = "QCM";
+                QuestionCourrante = ((int)numIte*(nbMotVocab-1)/nbIteMax); // On prend des mots espacés dans la base de question (du mot numéro 0 au dernier d'indice (nbMotVocab-1) puisque les indices commencent à 0)
+                
+                // On affiche la question choisie
+                afficherPanneauEnFctTypeQuestion();
+            }
             
-            // On affiche la question choisie
-            afficherPanneauEnFctTypeQuestion();
         }else
         {
             inInitialisation = false; // On n'est plus dans l'initialisation
             UnityEngine.Debug.Log("On quitte l'initialisation");
             // Une fois l'initialisation terminée, on génère les questions comme expliqué dans le cahier des charges
             genererQuestion();
-        }
-        numIte += 1;  
+        }  
     }
 
-    // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à un QCM
+    // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à un QCM (après avoir cliqué sur le bouton suivant)
     void InitialisationReponduQCM(){
         if (RepEntreeOK)
         { // PB Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
@@ -472,21 +523,6 @@ public class QuizManager : MonoBehaviour
             // Si l'utilisateur répond faux c'est qu'il hésitait (PB à prendre en compte même si il répond faux au QCM)
             Initialisation(); // On continue l'initialisation
         }
-    }
-
-    // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à une question à réponse entière
-    void InitialisationReponduEntier(){
-        UnityEngine.Debug.Log("Iteration " + numIte + " Entier");
-        if (RepEntreeOK)
-        {
-            UnityEngine.Debug.Log("Iteration " + numIte + " a répondu à la question entière CORRECTEMENT");
-            nbBienRep += 1;
-        }else
-        {
-            UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu à la question entière");
-            nbMalRep += 1;
-        }
-        Initialisation(); // On continue l'initialisation
     }
 
     void Update() // Fonction appelée toute les frame
@@ -517,67 +553,110 @@ public class QuizManager : MonoBehaviour
             // PB UserStats loadedData = new UserStats(); 
             // PB loadedData.vocabUtilisateur = gameObject.AddComponent(typeof(VocabUtilisateur)) as VocabUtilisateur; // loadedData.vocabUtilisateur = new VocabUtilisateur();
             
-            // On charge les données du joueur concerné 
-            UserStats loadedData = DataSaver.loadData<UserStats>("Joueur" + PlayerPrefs.GetInt("NumJoueur"));
+            // *****
+            // On charge les données statistiques du joueur concerné 
+            UserStats loadedData = DataSaver.loadData<UserStats>("Stats_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
             // UnityEngine.Debug.Log("PASSE LE LOAD, loadedData = " + loadedData);
-            if (loadedData == null )// PB || loadedData.vocabUtilisateur == null) // ou ""
+            if (loadedData == null || EqualityComparer<UserStats>.Default.Equals(loadedData, default(UserStats)))// PB || loadedData.vocabUtilisateur == null) // ou ""
             {
                 UnityEngine.Debug.Log("PAS DE DATA A LOAD");
-                UnityEngine.Debug.Log("Aucune donnée associée à ce joueur pour l'instant");
+                UnityEngine.Debug.Log("Aucune donnée statistique associée à ce joueur pour l'instant");
                 // On initialise les données de vocabulaire de l'utilisateur
                 vocUt.Initialise();
-                return;
-            }
-            // UnityEngine.Debug.Log("Proba d'acquisition récupéré = " + loadedData.probaAcquisition);
-            // UnityEngine.Debug.Log("NbRencontres récupéré = " + loadedData.nbRencontres);
-            // UnityEngine.Debug.Log("dateDerniereRencontre récupéré = " + loadedData.dateDerniereRencontre);
-
-            // Mise à jour des données du joueur
-            vocUt.probaAcquisition = new float[nbMotVocab];
-            vocUt.nbRencontres = new int[nbMotVocab];
-            vocUt.dateDerniereRencontre = new string[nbMotVocab];
-
-            Array.Copy(loadedData.probaAcquisition, vocUt.probaAcquisition, nbMotVocab);
-            Array.Copy(loadedData.nbRencontres, vocUt.nbRencontres, nbMotVocab);
-            // PB sans copy : vocUt.nbRencontres = loadedData.nbRencontres;
-            // PB sans copy : vocUt.dateDerniereRencontre = loadedData.dateDerniereRencontre;
-
-            // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre == null " + loadedData.dateDerniereRencontre == null);
-            // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre = " + loadedData.dateDerniereRencontre);
-            // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre.Length = " + loadedData.dateDerniereRencontre.Length);
-            for (int i = 0; i < nbMotVocab; i++)
+            }else
             {
-                if (loadedData.dateDerniereRencontre[i] != null) // On ne charge que les données qui existent (les autres restent vides mais on ne les consultera pas donc pas de problèmes)
-                {
-                    vocUt.dateDerniereRencontre[i] = loadedData.dateDerniereRencontre[i]; 
-                    // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + loadedData.dateDerniereRencontre[i]);
-                    // UnityEngine.Debug.Log("Date derniere rencontres VocUt [" + i + "] =" + vocUt.dateDerniereRencontre[i]);
-                
-                }else
-                {
-                    UnityEngine.Debug.Log("loadedData.dateDerniereRencontre[" + i + "] est null");
-                } 
-            }
+                // Si il y a quelque chose dans les données chargées, on les charge
+                // UnityEngine.Debug.Log("Proba d'acquisition récupéré = " + loadedData.probaAcquisition);
+                // UnityEngine.Debug.Log("NbRencontres récupéré = " + loadedData.nbRencontres);
+                // UnityEngine.Debug.Log("dateDerniereRencontre récupéré = " + loadedData.dateDerniereRencontre);
 
-            // Affichage des données chargées
-            for (int i = 0; i < nbMotVocab; i++)
-            {
-                // UnityEngine.Debug.Log("Proba d'acquisition [" + i + "] =" + loadedData.probaAcquisition[i]);
-                // UnityEngine.Debug.Log("Proba d'acquisition VocUt [" + i + "] =" + vocUt.probaAcquisition[i]);
-                // UnityEngine.Debug.Log("Nb rencontres [" + i + "] =" + loadedData.nbRencontres[i]);
-                // UnityEngine.Debug.Log("Nb rencontres VocUt [" + i + "] =" + vocUt.nbRencontres[i]);
+                // Mise à jour des données du joueur
+                vocUt.probaAcquisition = new float[nbMotVocab];
+                vocUt.nbRencontres = new int[nbMotVocab];
+                vocUt.dateDerniereRencontre = new string[nbMotVocab];
 
+                Array.Copy(loadedData.probaAcquisition, vocUt.probaAcquisition, nbMotVocab);
+                Array.Copy(loadedData.nbRencontres, vocUt.nbRencontres, nbMotVocab);
+                // PB sans copy : vocUt.nbRencontres = loadedData.nbRencontres;
+                // PB sans copy : vocUt.dateDerniereRencontre = loadedData.dateDerniereRencontre;
+
+                // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre == null " + loadedData.dateDerniereRencontre == null);
                 // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre = " + loadedData.dateDerniereRencontre);
                 // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre.Length = " + loadedData.dateDerniereRencontre.Length);
-                if (loadedData.dateDerniereRencontre[i] != null) // PB Attention, dateDerniereRencontre peut être null
+
+                for (int i = 0; i < nbMotVocab; i++)
                 {
-                    // DateTime copyDateDerniereRencontre = loadedData.dateDerniereRencontre[i]; // Pour ne pas transformer loadedData.dateDerniereRencontre[i] en string
-                    // DateTime copyDateDerniereRencontreVoc = vocUt.dateDerniereRencontre[i]; // Pour ne pas transformer vocUtData.dateDerniereRencontre[i] en string
-                    // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + copyDateDerniereRencontre.ToString("MM/dd/yyyy HH:mm:ss"));
-                    // UnityEngine.Debug.Log("Date derniere rencontres VocUt [" + i + "] =" + copyDateDerniereRencontreVoc.ToString("MM/dd/yyyy HH:mm:ss"));
+                    if (loadedData.dateDerniereRencontre[i] != null) // On ne charge que les données qui existent (les autres restent vides mais on ne les consultera pas donc pas de problèmes)
+                    {
+                        vocUt.dateDerniereRencontre[i] = loadedData.dateDerniereRencontre[i]; 
+                        // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + loadedData.dateDerniereRencontre[i]);
+                        // UnityEngine.Debug.Log("Date derniere rencontres VocUt [" + i + "] =" + vocUt.dateDerniereRencontre[i]);
+                    
+                    }else
+                    {
+                        UnityEngine.Debug.Log("loadedData.dateDerniereRencontre[" + i + "] est null");
+                    } 
                 }
             }
+            
+            // Affichage des données chargées
+            // for (int i = 0; i < nbMotVocab; i++)
+            // {
+            //     // UnityEngine.Debug.Log("Proba d'acquisition [" + i + "] =" + loadedData.probaAcquisition[i]);
+            //     // UnityEngine.Debug.Log("Proba d'acquisition VocUt [" + i + "] =" + vocUt.probaAcquisition[i]);
+            //     // UnityEngine.Debug.Log("Nb rencontres [" + i + "] =" + loadedData.nbRencontres[i]);
+            //     // UnityEngine.Debug.Log("Nb rencontres VocUt [" + i + "] =" + vocUt.nbRencontres[i]);
+
+            //     // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre = " + loadedData.dateDerniereRencontre);
+            //     // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre.Length = " + loadedData.dateDerniereRencontre.Length);
+            //     if (loadedData.dateDerniereRencontre[i] != null) // PB Attention, dateDerniereRencontre peut être null
+            //     {
+            //         // DateTime copyDateDerniereRencontre = loadedData.dateDerniereRencontre[i]; // Pour ne pas transformer loadedData.dateDerniereRencontre[i] en string
+            //         // DateTime copyDateDerniereRencontreVoc = vocUt.dateDerniereRencontre[i]; // Pour ne pas transformer vocUtData.dateDerniereRencontre[i] en string
+            //         // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + copyDateDerniereRencontre.ToString("MM/dd/yyyy HH:mm:ss"));
+            //         // UnityEngine.Debug.Log("Date derniere rencontres VocUt [" + i + "] =" + copyDateDerniereRencontreVoc.ToString("MM/dd/yyyy HH:mm:ss"));
+            //     }
+            // }
+
+
+            // *****
+            // On charge les données d'initialisation du joueur concerné 
+            UnityEngine.Debug.Log("ON CHARGE LES DONNEES D INITIALISATION");
+            UserInitialisation loadedDataInit = DataSaver.loadData<UserInitialisation>("Initialisation_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
+
+            UnityEngine.Debug.Log("LoadedData = " + loadedDataInit);
+            if (loadedDataInit == null || EqualityComparer<UserInitialisation>.Default.Equals(loadedDataInit, default(UserInitialisation)))
+            {
+                UnityEngine.Debug.Log("Aucune donnée d'initialisation associée à ce joueur pour l'instant");
+                // On indique que l'on n'a pas load d'ancienne partie (c'est une toute nouvelle partie)
+                loadAnciennePartie = false;
+                // On initialise les attributs du tout nouvel utilisateur pour qu'il puisse commencer sa partie
+                InitialiseUserInitialisation();
+            }else
+            {
+                UnityEngine.Debug.Log("Chargement des données d'initialisation associée à ce joueur...");
+                // Si il y a quelque chose dans les données chargées, on les charge
+                // Mise à jour des données du joueur
+                nbBienRep = loadedDataInit.nbBienRep;
+                nbMalRep = loadedDataInit.nbMalRep;
+                numIte = loadedDataInit.numIte;
+                inInitialisation = loadedDataInit.inInitialisation;
+                RepEntreeOK = loadedDataInit.RepEntreeOK;
+                NbQuestAvantNouvelle = loadedDataInit.NbQuestAvantNouvelle;
+                NbAncienneQuestion = loadedDataInit.NbAncienneQuestion;
+                NbQuestionsTotales = loadedDataInit.NbQuestionsTotales;
+                inQCM = loadedDataInit.inQCM;
+                QuestionCourrante = loadedDataInit.QuestionCourrante; 
+                TypeQuestion = loadedDataInit.TypeQuestion; 
+                NbAncienneQuestionTemp = loadedDataInit.NbAncienneQuestionTemp;
+
+                // On indique que l'on a load une ancienne partie (possiblement en cours d'initialisation)
+                loadAnciennePartie = true;  
+            }
+
+            UnityEngine.Debug.Log("nbBienRep =" + nbBienRep + "; nbMalRep = " + nbMalRep + "; numIte = " + numIte + "; inInitialisation = " + inInitialisation + "; RepEntreeOK = " + RepEntreeOK + "; NbQuestAvantNouvelle = " + NbQuestAvantNouvelle + "; NbAncienneQuestion = " + NbAncienneQuestion + "; NbQuestionsTotales = " + NbQuestionsTotales + "; inQCM = " + inQCM + "; QuestionCourrante = " + QuestionCourrante + "; TypeQuestion = " + TypeQuestion + "; NbAncienneQuestionTemp = " + NbAncienneQuestionTemp);
+            UnityEngine.Debug.Log("loadAnciennePartie = " + loadAnciennePartie);
         }else
         {
             UnityEngine.Debug.Log("PB PROBLEME, JOUEUR NON PRECISE !!");
