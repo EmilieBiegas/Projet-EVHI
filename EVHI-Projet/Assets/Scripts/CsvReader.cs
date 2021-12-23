@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 // using System.Linq; // PB régler les commentaires dans les using
 
-// Classe permettant de lire un CSV de question/réponses
+// Classe permettant de lire un CSV de question/réponses et de récupérer la liste des question/réponses
 public class CsvReader : MonoBehaviour
 {    
     public TextAsset textAssetData; // Le CSV à lire
