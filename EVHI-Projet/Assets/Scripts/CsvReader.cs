@@ -7,7 +7,7 @@ using System;
 // Classe permettant de lire un CSV de question/réponses et de récupérer la liste des question/réponses
 public class CsvReader : MonoBehaviour
 {    
-    public TextAsset textAssetData; // Le CSV à lire
+    public TextAsset textAssetData; // Le CSV à lire en format texte
     public List<QuestionReponse> myQr = new List<QuestionReponse>(); // La liste des question/réponses lu d'après le CSV
     private const int nbRep = 4; // Le nombre de proposition de réponse dans chaque ligne du CSV
     private const int nbColonne = nbRep + 2; // Le nombre de colonne par mot de vocabulaire : une colonne question et une colonne réponse correcte en plus 
