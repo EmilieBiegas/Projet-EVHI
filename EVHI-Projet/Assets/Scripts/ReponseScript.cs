@@ -13,12 +13,13 @@ public class ReponseScript : MonoBehaviour
         if(isCorrect){
             Debug.Log("Reponse correcte");
             quizManager.ReponduQCM(true); // On traite la réponse de l'utilisateur dans le quizManager (affichage des couleurs etc.)
+            quizManager.DecrementeNbQuestAvantNouvelle(); // On augmente l'approfondissement des connaissances
             quizManager.RepEntreeOK = true; // Indiquer dans quizManager que l'utilisateur a bien répondu
         }else
         {
             Debug.Log("Reponse incorrecte");
             quizManager.ReponduQCM(false); // On traite la réponse de l'utilisateur dans le quizManager (affichage des couleurs etc.)
-            quizManager.IncrementeNbQuestAvantNouvelle(); // PB on augmente le renforcemment des connaissances
+            quizManager.IncrementeNbQuestAvantNouvelle(); // On augmente le renforcemment des connaissances
             quizManager.RepEntreeOK = false; // Indiquer dans quizManager que l'utilisateur a mal répondu
         }
     }

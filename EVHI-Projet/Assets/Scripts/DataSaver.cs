@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Text;
 
-// Classe permettant de sauvegarder les données contenant beaucoup de variables (comme des instances de UserStats)
+// Classe permettant de sauvegarder les données contenant beaucoup de variables (comme des instances de UserStats ou de UserInitialisation)
 public class DataSaver
 {
     // Fonction permettant de sauvegarder les données
@@ -29,7 +29,7 @@ public class DataSaver
         {
             // Sauvegarde des données
             File.WriteAllBytes(tempPath, jsonByte);
-            Debug.Log("Données sauvegardées au chemin : " + tempPath.Replace("/", "\\"));
+            // Debug.Log("Données sauvegardées au chemin : " + tempPath.Replace("/", "\\"));
         }
         catch (Exception e)
         {
@@ -53,7 +53,7 @@ public class DataSaver
 
         if (!File.Exists(tempPath))
         {
-            Debug.Log("Le fichier n'existe pas");
+            // Debug.Log("Le fichier n'existe pas");
             return default(T);
         }
 
@@ -62,7 +62,7 @@ public class DataSaver
         try
         {
             jsonByte = File.ReadAllBytes(tempPath);
-            Debug.Log("Données chargées depuis le chemin : " + tempPath.Replace("/", "\\"));
+            // Debug.Log("Données chargées depuis le chemin : " + tempPath.Replace("/", "\\"));
         }
         catch (Exception e)
         {
@@ -90,20 +90,20 @@ public class DataSaver
         // Quitter si le dossier ou le fichier n'existe pas
         if (!Directory.Exists(Path.GetDirectoryName(tempPath)))
         {
-            Debug.Log("Le dossier n'existe pas");
+            // Debug.Log("Le dossier n'existe pas");
             return false;
         }
 
         if (!File.Exists(tempPath))
         {
-            Debug.Log("Le fichier n'existe pas");
+            // Debug.Log("Le fichier n'existe pas");
             return false;
         }
 
         try
         {
             File.Delete(tempPath);
-            Debug.Log("Données effacées sur le chemin : " + tempPath.Replace("/", "\\"));
+            // Debug.Log("Données effacées sur le chemin : " + tempPath.Replace("/", "\\"));
             success = true;
         }
         catch (Exception e)

@@ -1,5 +1,5 @@
-// using System.Collections;
-// using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 using System;
@@ -17,6 +17,7 @@ public class MenuUtilisateur : MonoBehaviour
     private Stopwatch timerPseudo; // Le chronomètre permettant de chronomètrer le temps que l'utilisateur met pour entrer son pseudo
     private string PseudoUtilisateur; // Le pseudo choisi par l'utilisateur
     private int NumJoueur; // Le numéro du joueur en cours de jeu ou qui souhaite changer son pseudo (trouvable également dans les PlayerPrefs)
+    private Stopwatch timerSelection; // Le chronomètre permettant de mesurer le temps de sélection de l'utilisateur dans le menu
 
     public void GoMenuUtilisateur(){ //Retourner dans le menu utilisateur (pas dans le menu pseudos), appuyer sur Retour cache le panneau pseudo
         PanneauPseudo.SetActive(false); // On cache le panneau pseudo
@@ -24,9 +25,24 @@ public class MenuUtilisateur : MonoBehaviour
     }
 
     public void GoMenuPseudo(int NumJ){ // Permet d'accéder au menu pseudos
+        // On arrête le chronomètre de sélection
+        timerSelection.Stop();
+        TimeSpan timeTaken = timerSelection.Elapsed; // On regarde le temps passé sur le chronomètre de sélection
+
+        // On transforme la durée obtenue en float (nombre de secondes/minutes/heures écoulées) afin de l'enregistrer
+        int days, hours, minutes, seconds, milliseconds;
+        days = timeTaken.Days;
+        hours = timeTaken.Hours;
+        minutes = timeTaken.Minutes;
+        seconds = timeTaken.Seconds;
+        milliseconds = timeTaken.Milliseconds;
+        // Temps passé en secondes :
+        float floatTimeSpan = ((float)days*24*3600) + ((float)hours*3600) + ((float)minutes*60) + (float)seconds + ((float)milliseconds/1000);
+        // UnityEngine.Debug.Log("Temps de sélection du bouton changement de pseudo : " + floatTimeSpan + " secondes");
+
         PanneauPseudo.SetActive(true); // On affiche le panneau pseudo   
 
-        // On lance le chronomètre
+        // On lance le chronomètre de saisie de pseudo
         timerPseudo = new Stopwatch();
         timerPseudo.Start();
 
@@ -35,15 +51,31 @@ public class MenuUtilisateur : MonoBehaviour
         // On "écoute" la saisie de l'utilisateur
         PseudoSaisi.GetComponent<InputField>().onEndEdit.AddListener(delegate { inputBetValue(PseudoSaisi.GetComponent<InputField>()); });   
         NumJoueur = NumJ; // On précise quel joueur a défini son pseudo
-        PlayerPrefs.SetInt("NumJoueur", NumJ); // On précise quel joueur joue pour pouvoir cliquer sur jouer dans ce menu sans problèmes
+        PlayerPrefs.SetInt("NumJoueur", NumJ); // On précise quel joueur joue pour pouvoir associer les actions à ce joueur en particulier, et pour pouvoir cliquer sur jouer dans ce menu sans problèmes 
+
+        // On enregistre le temps obtenu et on le sauvegarde
+        UpdateTempsSelectionMenu(floatTimeSpan);
     }
 
     public void ValiderPseudo(){ // Appellée lorsque l'utilisateur valide son choix de pseudo
         // Calcul de la vitesse d'entrée de texte (de son pseudo) de l'utilisateur
         timerPseudo.Stop();
         TimeSpan timeTaken = timerPseudo.Elapsed;
-        string foo = "Temps d'entrée de pseudo du joueur " + NumJoueur + " = " + timeTaken.ToString(@"m\:ss\.fff"); // PB s'en servir PB attention, timeTaken est un string mtn
-        UnityEngine.Debug.Log(foo);
+
+        // On transforme la durée obtenue en float (nombre de secondes/minutes/heures écoulées) afin de l'enregistrer dans le gérant de l'hésitation
+        int days, hours, minutes, seconds, milliseconds;
+        days = timeTaken.Days;
+        hours = timeTaken.Hours;
+        minutes = timeTaken.Minutes;
+        seconds = timeTaken.Seconds;
+        milliseconds = timeTaken.Milliseconds;
+        // Temps passé en secondes :
+        float floatTimeSpan = ((float)days*24*3600) + ((float)hours*3600) + ((float)minutes*60) + (float)seconds + ((float)milliseconds/1000);
+        
+        PlayerPrefs.SetFloat("TmpsEntreePseudoJ" + NumJoueur, floatTimeSpan); // On ajoute le temps de saisie du pseudo du joueur en cours de jeu pour pouvoir initialiser le temps d'entrée de texte
+        
+        string foo = "Temps d'entrée de pseudo du joueur " + NumJoueur + " = " + timeTaken.ToString(@"m\:ss\.fff"); // PB attention, timeTaken est un string mtn
+        // UnityEngine.Debug.Log(foo);
 
         // On met à jour le pseudo du joueur en question
         // Enregistrer le pseudo de l'utilisateur et le mettre dans l'emplacement sélectionné
@@ -62,7 +94,7 @@ public class MenuUtilisateur : MonoBehaviour
             ButtonJoueur3.GetComponentInChildren<Text>().text = PseudoUtilisateur;
             PlayerPrefs.SetString("PseudoJ3", PseudoUtilisateur); // Enregistrer le pseudo du joueur dans les PlayerPrefs pour pouvoir y accéder à chaque lancement de jeu
         }  
-        UnityEngine.Debug.Log("Pseudo choisi : " + PseudoUtilisateur);
+        // UnityEngine.Debug.Log("Pseudo choisi : " + PseudoUtilisateur);
         // On se rend sur la page de choix d'utilisateur
         GoMenuUtilisateur(); 
     }
@@ -104,12 +136,44 @@ public class MenuUtilisateur : MonoBehaviour
     public void CachePopUpWarning(){ // Fonction permettant de cacher le pop-up warning de l'écrasement des données utilisateur
         PopUpWarning.SetActive(false);        
     }
+
+    public void UpdateTempsSelectionMenu(float tmpsSelection){
+        // On sauvegarde les données de temps de sélection dans les menus de ce joueur
+        // On récupère l'ancienne liste de tempsSelectionMenu et on la complète avec les données récupérées
+        var tempsSelectionMenu = new List<float>(); // Une liste de temps de sélection dans les menus permettant d'initialiser le niveau de l'utilisateur en terme de temps de sélection
+    
+
+        // On charge l'ancienne liste de tempsSelectionMenu du joueur concerné 
+        UserSelectionMenu loadedDataSelection = DataSaver.loadData<UserSelectionMenu>("SelectionMenuJ" + PlayerPrefs.GetInt("NumJoueur"));
+
+        if (loadedDataSelection == null || EqualityComparer<UserSelectionMenu>.Default.Equals(loadedDataSelection, default(UserSelectionMenu)))
+        {
+            // UnityEngine.Debug.Log("PAS DE DATA A LOAD SUR LES TEMPS DE SELECTION DANS LES MENUS");
+        }else
+        {
+            tempsSelectionMenu = loadedDataSelection.tempsSelectionMenu;
+            // UnityEngine.Debug.Log("Liste tempsSelectionMenu chargée (MenuUtilisateur) = " + tempsSelectionMenu + " de taille " + tempsSelectionMenu.Count);
+        }
+
+        // On ajoute les données récupérées à ce tour
+        tempsSelectionMenu.Add(tmpsSelection);
+        // UnityEngine.Debug.Log("Liste tempsSelectionMenu Concaténée (MenuUtilisateur) = " + tempsSelectionMenu + " de taille " + tempsSelectionMenu.Count);
+
+        UserSelectionMenu saveDataSelectionMenu = new UserSelectionMenu();
+        // PB on doit enregistrer toutes les stats
+        saveDataSelectionMenu.tempsSelectionMenu = new List<float>();
+        saveDataSelectionMenu.tempsSelectionMenu = tempsSelectionMenu;
+        // Sauvegarde des données de selection dans les menus dans un fichier nommé SelectionMenuJ suivi du numéro du joueur
+        DataSaver.saveData(saveDataSelectionMenu, "SelectionMenuJ" + PlayerPrefs.GetInt("NumJoueur"));
+    }
     
     public void EffaceDonnees(){ // Associée au bouton d'écrasement des données utilisateur
         // On efface toutes les données du joueur en question
         DataSaver.deleteData("Stats_Joueur" + NumJoueur); // Efface les statistiques du joueur
         DataSaver.deleteData("Initialisation_Joueur" + NumJoueur); // Efface les données d'initialisation du joueur
+        DataSaver.deleteData("SelectionMenuJ" + NumJoueur); // Efface les données de selection dans les menus du joueur
         PlayerPrefs.DeleteKey("PseudoJ" + NumJoueur); // Efface son pseudo
+        PlayerPrefs.DeleteKey("TmpsEntreePseudoJ" + NumJoueur); // Efface le temps de saisie de son pseudo
 
         // On se rend sur la page de choix d'utilisateur (en cachant le warning)
         CachePopUpWarning(); 
@@ -120,6 +184,10 @@ public class MenuUtilisateur : MonoBehaviour
     void OnEnable()
     {
         SetPseudos(); // On affiche les bons pseudos lorsque l'on ouvre le menu utilisateurs
+
+        // On lance le chronomètre pour calculer la vitesse de selection de l'utilisateur
+        timerSelection = new Stopwatch();
+        timerSelection.Start();
     }
 
     void Update()

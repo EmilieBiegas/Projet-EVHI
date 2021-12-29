@@ -571,6 +571,7 @@ MonoBehaviour:
   OkButton: {fileID: 988365260}
   EntreeRep: {fileID: 721556485}
   BonneRep: {fileID: 694619419}
+  hesitationManager: {fileID: 1295691358}
   inInitialisation: 0
   RepEntreeOK: 0
   NbQuestAvantNouvelle: 1
@@ -680,6 +681,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192802001}
   m_CullTransparentMesh: 1
+--- !u!1 &265291928
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 265291930}
+  - component: {fileID: 265291929}
+  m_Layer: 0
+  m_Name: OculometreManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &265291929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265291928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b807aa152177594d8033c8d8d76faae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occulaireHesite: []
+  occulaireSur: []
+  MaxTempsDiff: 0
+  NbBougRegard: 0
+--- !u!4 &265291930
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265291928}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 257.77817, y: 156.38329, z: -27.131304}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &334862626
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,6 +1019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  hesitationManager: {fileID: 0}
   quizManager: {fileID: 0}
 --- !u!114 &478694624
 MonoBehaviour:
@@ -2178,6 +2227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  hesitationManager: {fileID: 0}
   quizManager: {fileID: 0}
 --- !u!114 &974579206
 MonoBehaviour:
@@ -2759,6 +2809,7 @@ MonoBehaviour:
   probaAcquisition: []
   nbRencontres: 
   dateDerniereRencontre: []
+  nbMotVocab: 0
 --- !u!4 &1164000566
 Transform:
   m_ObjectHideFlags: 0
@@ -3117,6 +3168,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 192715049}
+--- !u!1 &1295691357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1295691359}
+  - component: {fileID: 1295691358}
+  m_Layer: 0
+  m_Name: HesitationManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1295691358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295691357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 657f829dceba148459ac447c2d1f0214, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nivSelection: 0
+  nivEntreeTexte: 0
+  oculometreManager: {fileID: 265291929}
+--- !u!4 &1295691359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295691357}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 257.77817, y: 156.38329, z: -27.131304}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1326499834
 GameObject:
   m_ObjectHideFlags: 0
@@ -3146,8 +3243,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6d47f0e9fcaf684d859d5d460744540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vocabUt: {fileID: 1164000564}
-  quizManager: {fileID: 192715048}
+  vocabUt: {fileID: 1164000565}
+  hesitationManager: {fileID: 1295691358}
+  quizManager: {fileID: 192715049}
 --- !u!4 &1326499836
 Transform:
   m_ObjectHideFlags: 0
@@ -4068,6 +4166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  hesitationManager: {fileID: 0}
   quizManager: {fileID: 0}
 --- !u!1 &1563345399
 GameObject:
@@ -4123,6 +4222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vocabUt: {fileID: 0}
+  hesitationManager: {fileID: 0}
   quizManager: {fileID: 0}
 --- !u!114 &1563345402
 MonoBehaviour:

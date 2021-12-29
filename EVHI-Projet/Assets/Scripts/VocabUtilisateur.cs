@@ -10,15 +10,23 @@ public class VocabUtilisateur : MonoBehaviour
     public float[] probaAcquisition; //Un tableau de proba d'acquisition de la même taille que QnA de QuizManager ou myQr de CsvReader (càd le nombre de mots de vocabulaire)
     public int[] nbRencontres; //Un tableau du nombre de fois où le mot a été rencontré de la même taille que QnA de QuizManager ou myQr de CsvReader (càd le nombre de mots de vocabulaire)
     public string[] dateDerniereRencontre; //Un tableau de date de la dernière rencontre au format "MM/dd/yyyy HH:mm:ss" pour pouvoir appliquer la Power Law of Practice
-    private const int nbMotVocab = 6; // PB Le nombre de mots de vocabulaires disponibles
     // Paramètre beta permettant de prendre plus ou moins en compte la correction de la réponse donnée et l'hésitation de l'utilisateur dans la proba d'acquisition du mot de vocabulaire
     private const float beta = 1; // PB Beta à 1 : on ne prends en compte que la correction de la réponse donnée et pas l'hésitation
 
     public void Initialise() // Initialisation des statistiques (à n'appeler que pour un nouvel utilisateur)
     {
-        probaAcquisition = new float[nbMotVocab]{0,0,0,0,0,0}; // PB si pas 6
-        nbRencontres = new int[nbMotVocab]{0,0,0,0,0,0}; // PB si pas 6
-        dateDerniereRencontre = new string[nbMotVocab]; //PB {DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")}; 
+        // UnityEngine.Debug.Log("INITIALISATION DE VOCABUT, NBMOTVOCAB = " + PlayerPrefs.GetInt("NbMotsVocab"));
+        probaAcquisition = new float[PlayerPrefs.GetInt("NbMotsVocab")];
+        nbRencontres = new int[PlayerPrefs.GetInt("NbMotsVocab")];
+        // On initialise toutes les données à 0
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
+        {
+            probaAcquisition[i] = 0;
+            nbRencontres[i] = 0;
+        }
+        // UnityEngine.Debug.Log("PROBA ACQUISITION APRES INITIALISATION = " + probaAcquisition);
+
+        dateDerniereRencontre = new string[PlayerPrefs.GetInt("NbMotsVocab")]; //PB {DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"), DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")}; 
         // PB Penser à regarder le dateDerniereRencontre seulement si nbRencontres > 0 !!
 
         // Debug.Log("Taille des probas = "+ probaAcquisition.Length);
@@ -30,39 +38,48 @@ public class VocabUtilisateur : MonoBehaviour
     //     probaAcquisition[indiceQuestion] = valProba;
     // }
 
-    // Fonction qui màj la proba d'acquisition lorsque l'on répond à un QCM // PB à adapter
+    // Fonction qui màj la proba d'acquisition lorsque l'on répond à un QCM
     public void UpdateProbaAcquisitionQCM(int indiceQuestion, bool correct, float hesite){
         // correct vaut true si l'utilisateur a donné la bonne réponse et false sinon
         // hesite est déterminé par la probabilité d’hésitation de l’utilisateur, et vaut 1 si l’utilisateur hésite totalement (d’où le 1-cette proba)
         int intCorrect = correct ? 1 : 0; // Vaut 1 si true et 0 si false
         
-        probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite);  
+        probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite)*intCorrect; // On veut que ça vaille 0 si l'utilisateur a mal répondu 
+        // PB si mauvaise réponse, on veut le pénaliser qd il n'hésite pas: introduire un (-1)^intCorrect mais peut etre negatif alors...
     }
 
-    // Fonction qui màj la proba d'acquisition lorsque l'on répond à un Questionnaire à réponse entière // PB à adapter
+    // Fonction qui màj la proba d'acquisition lorsque l'on répond à un Questionnaire à réponse entière 
     public void UpdateProbaAcquisitionQEntier(int indiceQuestion, bool correct, float hesite){ 
         // correct vaut true si l'utilisateur a donné la bonne réponse et false sinon
         // hesite est déterminé par la probabilité d’hésitation de l’utilisateur, et vaut 1 si l’utilisateur hésite totalement (d’où le 1-cette proba)
         int intCorrect = correct ? 1 : 0; // Vaut 1 si true et 0 si false
         
         probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite);  // PB peut etre un autre beta ?          
-        
+        // PB si mauvaise réponse, on veut le pénaliser qd il n'hésite pas: introduire un (-1)^intCorrect mais peut etre negatif alors...
     }
 
     // Fonction qui retourne les probas d'acquisition actuelle en fonction du temps passé depuis la dernière rencontre du mot et de la proba d'acquisition enregistrée à cette date
     public float[] UpdateProbaAcquisitionPowLawPrac(){ // PB changer nom
         // PB Estimer chaque proba d'acquisition au temps actuel en fonction de la power Law of Practice 
-        float[] newProbaAcquisition = new float[nbMotVocab];
-        Array.Copy(probaAcquisition, newProbaAcquisition, nbMotVocab); // On fait une copy pour ne pas perdre les valeurs de proba d'acquisition au temps de la dernière rencontre
+        float[] newProbaAcquisition = new float[PlayerPrefs.GetInt("NbMotsVocab")];
+
+        // UnityEngine.Debug.Log("NBMOTVOCAB = " + PlayerPrefs.GetInt("NbMotsVocab"));
+        // UnityEngine.Debug.Log("Proba acquisition = " + probaAcquisition);
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
+        {
+            // UnityEngine.Debug.Log("Proba acquisition [" + i + "] = " + probaAcquisition[i]);
+        }
+
+        Array.Copy(probaAcquisition, newProbaAcquisition, PlayerPrefs.GetInt("NbMotsVocab")); // On fait une copy pour ne pas perdre les valeurs de proba d'acquisition au temps de la dernière rencontre
 
         // On converti les dates en DateTime depuis le type string
-        DateTime[] DerniereRencontreDATE = new DateTime[nbMotVocab];
-        TimeSpan[] TempsEntreDerniereDateEtAuj = new TimeSpan[nbMotVocab]; // Temps écoulé depuis la dernière rencontre du mot
-        float[] floatTimeSpan = new float[nbMotVocab]; // Temps écoulé depuis la dernière rencontre du mot en float (en seconde par ex.)
+        DateTime[] DerniereRencontreDATE = new DateTime[PlayerPrefs.GetInt("NbMotsVocab")];
+        TimeSpan[] TempsEntreDerniereDateEtAuj = new TimeSpan[PlayerPrefs.GetInt("NbMotsVocab")]; // Temps écoulé depuis la dernière rencontre du mot
+        float[] floatTimeSpan = new float[PlayerPrefs.GetInt("NbMotsVocab")]; // Temps écoulé depuis la dernière rencontre du mot en float (en seconde par ex.)
         // IFormatProvider culture = new CultureInfo("en-US", true); // PB
         // DateTimeFormatInfo culture = new DateTimeFormatInfo(); //"MM/dd/yyyy HH:mm:ss" // PB
 
-        for (int i = 0; i < nbMotVocab; i++)
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
         {
             if (dateDerniereRencontre[i] != null && dateDerniereRencontre[i] != "")
             {

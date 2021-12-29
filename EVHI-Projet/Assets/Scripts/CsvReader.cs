@@ -28,7 +28,7 @@ public class CsvReader : MonoBehaviour
                 indices[l] = l; // Ils sont tous à la même place que l'ordre dans lequel ils sont cités dans le CSV
             }
 
-            System.Random rnd = new System.Random(i); //PB random plus ou moins différent en fonction de la ligne, disons OK
+            System.Random rnd = new System.Random(i); // random plus ou moins différent en fonction de la ligne, disons OK
             int indGood = rnd.Next(0, nbRep); // On tire au hasard l'indice de la bonne réponse (qui est au début dans la première colonne)
             indices[0] = indGood; // On inverse l'indice de la première colonne avec l'indice tiré pour que la bonne réponse soit placée à un indice aléatoire
             indices[indGood] = 0;
