@@ -76,7 +76,6 @@ public class HesitationManager : MonoBehaviour
     }
 
     public float EstimationHesitationSelection(float temps){ // Fonction estimant et retournant la probabilité d'hésitation de l'utilisateur en fonction de la vitesse de sélection
-        // PB attention, il faut que nivSelection soit déjà défini qd on arrive ici (!=-1)
 
         MajNivSelection(temps); // On met à jour le niveau de l'utilisateur en fonction du temps qu'il a mis à répondre
         UnityEngine.Debug.Log("Niveau de sélection de l'utilisateur = " + nivSelection);
@@ -106,8 +105,6 @@ public class HesitationManager : MonoBehaviour
 
     public float EstimationHesitationEntier(float temps, int NbCar){ // Fonction estimant et retournant la probabilité d'hésitation de l'utilisateur (lorsqu'il a répondu à une question à réponse entière)
         // Nous n'avons que la vitesse d'entrée de texte à prendre en compte
-
-        // PB attention, il faut que nivEntreeTexte soit déjà défini qd on arrive ici (!=-1)
 
         MajNivEntreeeTexte(temps, NbCar); // On met à jour le niveau de l'utilisateur en fonction du temps qu'il a mis à répondre
         
@@ -161,7 +158,6 @@ public class HesitationManager : MonoBehaviour
         }
     }
 
-    // PB a utiliser
     public void MajNivSelectionMenu(float temps){ // Fonction permettant de mettre à jour le niveau de l'utilisateur en ce qui concerne la vitesse de sélection lorsqu'il navigue dans les menus
         // On met à jour le niveau de sélection de l'utilisateur dès que celui-ci sélectionne un bouton
         // On compare alors le temps qu'il a mis avec le temps prédit par son niveau

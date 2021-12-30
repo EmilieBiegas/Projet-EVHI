@@ -575,10 +575,14 @@ MonoBehaviour:
   inInitialisation: 0
   RepEntreeOK: 0
   NbQuestAvantNouvelle: 1
+  NbQuestAvantNouvelleTemp: 0
   NbAncienneQuestion: 0
   NbAncienneQuestionTemp: 0
+  NbNouvelleQuestion: 0
+  NbNouvelleQuestionTemp: 0
   NbQuestionsTotales: 0
   inQCM: 0
+  IndQuestNonRencontrees: 
   TypeQuestion: 
   nbBienRep: 0
   nbMalRep: 0
@@ -1158,7 +1162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecab23583364a49458814054c83fb4e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textAssetData: {fileID: 4900000, guid: eff413b2f40a8c64c9756adf0d7262ca, type: 3}
+  textAssetData: {fileID: 4900000, guid: 48bc129a0b5f670429cd24f85c874d17, type: 3}
   myQr: []
 --- !u!4 &518164037
 Transform:
@@ -2809,7 +2813,6 @@ MonoBehaviour:
   probaAcquisition: []
   nbRencontres: 
   dateDerniereRencontre: []
-  nbMotVocab: 0
 --- !u!4 &1164000566
 Transform:
   m_ObjectHideFlags: 0

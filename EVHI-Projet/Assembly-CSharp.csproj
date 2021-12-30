@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\OculometreManager.cs" />
      <Compile Include="Assets\Scripts\CsvReader.cs" />
      <Compile Include="Assets\Scripts\UserSelectionMenu.cs" />
+     <Compile Include="Assets\Scripts\UserTraces.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.24f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

@@ -3,8 +3,10 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - CsvReader
     - FicheManager
+    - HesitationManager
     - MainMenu
     - MenuUtilisateur
+    - OculometreManager
     - QuizManager
     - ReponseScript
     - VocabUtilisateur
@@ -56,23 +58,23 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1524}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1760}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 2254}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 2686}
     - Class: 114
-      Script: {instanceID: 2856}
+      Script: {instanceID: 2860}
     - Class: 114
-      Script: {instanceID: 3092}
+      Script: {instanceID: 3096}
     - Class: 114
-      Script: {instanceID: 3340}
+      Script: {instanceID: 3344}
     - Class: 114
-      Script: {instanceID: 3460}
+      Script: {instanceID: 3464}
     - Class: 114
-      Script: {instanceID: 3794}
+      Script: {instanceID: 3798}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -107,23 +109,23 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1524}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1760}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 2254}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 2686}
     - Class: 114
-      Script: {instanceID: 2856}
+      Script: {instanceID: 2860}
     - Class: 114
-      Script: {instanceID: 3092}
+      Script: {instanceID: 3096}
     - Class: 114
-      Script: {instanceID: 3340}
+      Script: {instanceID: 3344}
     - Class: 114
-      Script: {instanceID: 3460}
+      Script: {instanceID: 3464}
     - Class: 114
-      Script: {instanceID: 3794}
+      Script: {instanceID: 3798}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -158,29 +160,29 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1524}
     - Class: 114
-      Script: {instanceID: 1526}
+      Script: {instanceID: 1528}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1760}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 2254}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 2686}
     - Class: 114
-      Script: {instanceID: 2856}
+      Script: {instanceID: 2860}
     - Class: 114
-      Script: {instanceID: 3092}
+      Script: {instanceID: 3096}
     - Class: 114
-      Script: {instanceID: 3152}
+      Script: {instanceID: 3156}
     - Class: 114
-      Script: {instanceID: 3340}
+      Script: {instanceID: 3344}
     - Class: 114
-      Script: {instanceID: 3460}
+      Script: {instanceID: 3464}
     - Class: 114
-      Script: {instanceID: 3794}
+      Script: {instanceID: 3798}
     - Class: 114
-      Script: {instanceID: 4062}
+      Script: {instanceID: 4066}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -217,35 +219,39 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1524}
     - Class: 114
-      Script: {instanceID: 1526}
+      Script: {instanceID: 1528}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1760}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 2254}
     - Class: 114
-      Script: {instanceID: 2516}
+      Script: {instanceID: 2518}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 2686}
     - Class: 114
-      Script: {instanceID: 2856}
+      Script: {instanceID: 2860}
     - Class: 114
-      Script: {instanceID: 3092}
+      Script: {instanceID: 3096}
     - Class: 114
-      Script: {instanceID: 3118}
+      Script: {instanceID: 3122}
     - Class: 114
-      Script: {instanceID: 3152}
+      Script: {instanceID: 3156}
     - Class: 114
-      Script: {instanceID: 3340}
+      Script: {instanceID: 3344}
     - Class: 114
-      Script: {instanceID: 3460}
+      Script: {instanceID: 3464}
     - Class: 114
-      Script: {instanceID: 3794}
+      Script: {instanceID: 3798}
     - Class: 114
-      Script: {instanceID: 4558}
+      Script: {instanceID: 4562}
     - Class: 114
-      Script: {instanceID: 5326}
+      Script: {instanceID: 4860}
+    - Class: 114
+      Script: {instanceID: 5284}
+    - Class: 114
+      Script: {instanceID: 5334}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -451,7 +457,7 @@ ScriptsOnlyBuild:
     className: GraphicRaycaster
   - hash:
       serializedVersion: 2
-      Hash: 9f806aa1acea40e5721b5f6b58a6e862
+      Hash: 174f4c70217e1bc7c9212d55381a5c5e
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: QuizManager
@@ -553,7 +559,7 @@ ScriptsOnlyBuild:
     className: Outline
   - hash:
       serializedVersion: 2
-      Hash: 216086bd58776ffac438185da172902d
+      Hash: 075f6517cd718c8cb3f8780d0b1ad1c9
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MainMenu
@@ -673,7 +679,7 @@ ScriptsOnlyBuild:
     className: Mask
   - hash:
       serializedVersion: 2
-      Hash: 07ed58f87f1e22c67ab84a90f0a9f02a
+      Hash: ecec91bff97968e2cdcaf17e1f73bcad
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: VocabUtilisateur
@@ -733,6 +739,12 @@ ScriptsOnlyBuild:
     className: RectMask2D
   - hash:
       serializedVersion: 2
+      Hash: aa0485d481f3237c952912ed94c98bcb
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: HesitationManager
+  - hash:
+      serializedVersion: 2
       Hash: 87ad3705a58f19c47136728d4a6e9c47
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
@@ -767,6 +779,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_SpriteAsset
+  - hash:
+      serializedVersion: 2
+      Hash: c666937204489dd1ebea1b1b7bf9188c
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: OculometreManager
   - hash:
       serializedVersion: 2
       Hash: e7a73f5f78ba6445195ec23b74a1ce2d
@@ -821,4 +839,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/QCM.unity
   - Assets/Scenes/MenuParametres.unity
   - Assets/Scenes/MenuUtilisateurs.unity
-  playerPath: C:/Users/Mimis/EVHI-ProjBuild/EVHI-Projet.exe
+  playerPath: C:/Users/Mimis/EVHI-ProjetBuil/EVHI-Projet.exe

@@ -25,5 +25,4 @@ public class UserInitialisation
     public int NbAncienneQuestionTemp; // Pour permettre de mettre à jour NbAncienneQuestion que quand l'utilisateur a répondu et pas avant (s'il a juste vu la question)
     public int NbNouvelleQuestionTemp; // Pour permettre de mettre à jour NbNouvelleQuestion que quand l'utilisateur a répondu et pas avant (s'il a juste vu la question)
     public List<int> IndQuestNonRencontrees; // Indices des questions non encores posées
-    // PB public List<float> tempsSelectionMenu; // Une liste de temps de sélection dans les menus permettant d'initialiser le niveau de l'utilisateur en terme de temps de sélection
 }

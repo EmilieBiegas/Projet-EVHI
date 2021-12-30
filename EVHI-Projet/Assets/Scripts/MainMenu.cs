@@ -15,12 +15,6 @@ public class MainMenu : MonoBehaviour
     public QuizManager quizManager; // Pour la sauvegarde des données d'initialisation qui s'effectue lorsque l'on revient au menu depuis une question
     private Stopwatch timer; // Le chronomètre permettant de mesurer le temps de sélection de l'utilisateur dans le menu
 
-    // void Start(){ // PB non
-    //     UnityEngine.Debug.Log("START REINITIALISE LISTE DE SELECTION MAIN MENU");
-    //     // On alloue la liste de tempsSelectionMenu
-    //     tempsSelectionMenu = new List<float>();
-    // }
-
     public void PlayGame(int NumJ){ // Associé au bouton jouer
         PlayerPrefs.SetInt("NumJoueur", NumJ); // On précise quel joueur joue pour pouvoir récupérer ses données et définir les données de ce joueur
         

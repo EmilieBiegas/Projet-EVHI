@@ -11,7 +11,7 @@ public class VocabUtilisateur : MonoBehaviour
     public int[] nbRencontres; //Un tableau du nombre de fois où le mot a été rencontré de la même taille que QnA de QuizManager ou myQr de CsvReader (càd le nombre de mots de vocabulaire)
     public string[] dateDerniereRencontre; //Un tableau de date de la dernière rencontre au format "MM/dd/yyyy HH:mm:ss" pour pouvoir appliquer la Power Law of Practice
     // Paramètre beta permettant de prendre plus ou moins en compte la correction de la réponse donnée et l'hésitation de l'utilisateur dans la proba d'acquisition du mot de vocabulaire
-    private const float beta = 1; // PB Beta à 1 : on ne prends en compte que la correction de la réponse donnée et pas l'hésitation
+    private const float beta = 0.5f; // PB Beta à 1 : on ne prends en compte que la correction de la réponse donnée et pas l'hésitation
 
     public void Initialise() // Initialisation des statistiques (à n'appeler que pour un nouvel utilisateur)
     {
@@ -44,7 +44,8 @@ public class VocabUtilisateur : MonoBehaviour
         // hesite est déterminé par la probabilité d’hésitation de l’utilisateur, et vaut 1 si l’utilisateur hésite totalement (d’où le 1-cette proba)
         int intCorrect = correct ? 1 : 0; // Vaut 1 si true et 0 si false
         
-        probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite)*intCorrect; // On veut que ça vaille 0 si l'utilisateur a mal répondu 
+        probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite)*intCorrect; // On veut que ça vaille 0 si l'utilisateur a mal répondu
+    
         // PB si mauvaise réponse, on veut le pénaliser qd il n'hésite pas: introduire un (-1)^intCorrect mais peut etre negatif alors...
     }
 
@@ -54,13 +55,14 @@ public class VocabUtilisateur : MonoBehaviour
         // hesite est déterminé par la probabilité d’hésitation de l’utilisateur, et vaut 1 si l’utilisateur hésite totalement (d’où le 1-cette proba)
         int intCorrect = correct ? 1 : 0; // Vaut 1 si true et 0 si false
         
-        probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite);  // PB peut etre un autre beta ?          
+        probaAcquisition[indiceQuestion] = beta*intCorrect + (1-beta)*(1-hesite)*intCorrect;  // On veut que ça vaille 0 si l'utilisateur a mal répondu
+        // PB peut etre un autre beta ?          
         // PB si mauvaise réponse, on veut le pénaliser qd il n'hésite pas: introduire un (-1)^intCorrect mais peut etre negatif alors...
     }
 
     // Fonction qui retourne les probas d'acquisition actuelle en fonction du temps passé depuis la dernière rencontre du mot et de la proba d'acquisition enregistrée à cette date
-    public float[] UpdateProbaAcquisitionPowLawPrac(){ // PB changer nom
-        // PB Estimer chaque proba d'acquisition au temps actuel en fonction de la power Law of Practice 
+    public float[] UpdateProbaAcquisitionOubli(){ // PB changer nom
+        // PB Estimer chaque proba d'acquisition au temps actuel en fonction de la courbe de l'oubli
         float[] newProbaAcquisition = new float[PlayerPrefs.GetInt("NbMotsVocab")];
 
         // UnityEngine.Debug.Log("NBMOTVOCAB = " + PlayerPrefs.GetInt("NbMotsVocab"));

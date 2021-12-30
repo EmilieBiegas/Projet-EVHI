@@ -59,6 +59,7 @@ public class QuizManager : MonoBehaviour
 
         // Le nombre de mots de vocabulaire est donné par la taille de la liste de question/réponses
         PlayerPrefs.SetInt("NbMotsVocab", QnA.Count); // On enregistre cette donnée dans les PlayerPrefs afin de pouvoir y accéder dans tous les scripts
+        UnityEngine.Debug.Log("INITIALISATION DU NOMBRE DE MOT DE VOCABULAIRE = " + QnA.Count);
 
         // Pour le calcul de la vitesse de sélection 
         timer = new Stopwatch();
@@ -69,7 +70,7 @@ public class QuizManager : MonoBehaviour
     // Fonction permettant d'initialiser les valeurs des attributs pour l'initialisation dans le cas d'un tout nouveau joueur
     void InitialiseUserInitialisation(){
         // On initialise les attributs caractérisant la dynamique du quiz
-        NbQuestAvantNouvelle = 1; // PB a changer = 1 // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque fois que le cycle en cours se termine)
+        NbQuestAvantNouvelle = 1; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque fois que le cycle en cours se termine)
         NbQuestAvantNouvelleTemp = 1; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
         NbAncienneQuestion = 0; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
         NbNouvelleQuestion = 0; // Le nombre de questions posées sur des mots pas encore rencontrés depuis la dernière rencontre d'un ancien mot
@@ -196,14 +197,34 @@ public class QuizManager : MonoBehaviour
         NbAncienneQuestion = NbAncienneQuestionTemp; // On màj le NbAncienneQuestion mtn que l'utilisateur a répondu
         NbNouvelleQuestion = NbNouvelleQuestionTemp; // On màj le NbNouvelleQuestion mtn que l'utilisateur a répondu
 
+        // On regarde si l'utilisateur a entré la bonne réponse
+        var bonneRepEntree = (ReponseUtilisateur.ToLower() == QnA[QuestionCourrante].ReponseCorrecte.ToLower());  // On met les deux chaînes en minuscule pour qu'elles soient comparables
+        // UnityEngine.Debug.Log("Meme rep entree ? " + bonneRepEntree);
+        if (bonneRepEntree == false)
+        {
+            if (QnA[QuestionCourrante].ReponseCorrecte.ToLower().Substring(0,2) == "to")
+            {
+                // UnityEngine.Debug.Log("Bonne réponse commence par to");
+                bonneRepEntree = (ReponseUtilisateur.ToLower() == QnA[QuestionCourrante].ReponseCorrecte.ToLower().Substring(3));
+            }
+
+            if (ReponseUtilisateur.ToLower().Substring(0,2) == "to")
+            {
+                // UnityEngine.Debug.Log("Réponse donnée commence par to");
+                bonneRepEntree = (ReponseUtilisateur.ToLower().Substring(3) == QnA[QuestionCourrante].ReponseCorrecte.ToLower());
+            }
+        }
+        // UnityEngine.Debug.Log("QnA[QuestionCourrante].ReponseCorrecte = " + QnA[QuestionCourrante].ReponseCorrecte + " et ReponseUtilisateur = " + ReponseUtilisateur); // OK, .ToLower et .Sustring ne modifient pas la chaîne d'origine
+        // UnityEngine.Debug.Log("Meme rep entree sans le to ? " + bonneRepEntree);
+
         // On affiche le carré en vert si l'utilisateur a entré la bonne réponse et sinon on affiche en rouge son carré et la bonne réponse en vert
-        if (ReponseUtilisateur == QnA[QuestionCourrante].ReponseCorrecte)
+        if (bonneRepEntree)
         {
             UnityEngine.Debug.Log("BONNE REPONSE !");
             float hesite = hesitationManager.EstimationHesitationEntier(floatTimeSpan, nbCarRep); // On estime l'hésitation de l'utilisateur
             vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, true, hesite); // On met à jour les probas d'acquisition
             RepEntreeOK = true; // On indique que l'utilisateur a donné la bonne réponse
-            DecrementeNbQuestAvantNouvelle(); // On augmente l'étendu de l'apprentissage (plutôt que le renforcement des connaissances) // PB peut etre pas a chaque bonne rep ?
+            DecrementeNbQuestAvantNouvelle(); // On augmente l'étendu de l'apprentissage (plutôt que le renforcement des connaissances)
 
             // Change la couleur du bouton (en mode non cliquable)
             var colors = EntreeRep.GetComponent<InputField>().colors;
@@ -218,7 +239,7 @@ public class QuizManager : MonoBehaviour
             float hesite = hesitationManager.EstimationHesitationEntier(floatTimeSpan, nbCarRep); // On estime l'hésitation de l'utilisateur
             vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, false, hesite); // On met à jour les probas d'acquisition
             RepEntreeOK = false; // On indique que l'utilisateur a donné la mauvaise réponse
-            IncrementeNbQuestAvantNouvelle(); // PB on augmente le renforcemment des connaissances (càd augmenter le nombre de questions déjà vues nécessaires avant une nouvelle question)  // PB peut etre pas a chaque mauvaise rep ?
+            IncrementeNbQuestAvantNouvelle(); // PB on augmente le renforcemment des connaissances (càd augmenter le nombre de questions déjà vues nécessaires avant une nouvelle question)
 
             // On met la réponse rentrée en rouge et on affiche un deuxième carré contenant la bonne réponse en vert
             var colors = EntreeRep.GetComponent<InputField>().colors;
@@ -247,7 +268,7 @@ public class QuizManager : MonoBehaviour
             {
                 // UnityEngine.Debug.Log("Iteration " + numIte + " a répondu à la question entière CORRECTEMENT");
                 nbBienRep += 1;
-                // PB ajouter le temps de sélection, d'entrée de texte et les données occulomètriques de cette question dans les données "sûr"
+                // PB ajouter (le temps de sélection, d'entrée de texte et) les données occulomètriques de cette question dans les données "sûr"
             }else
             {
                 // UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu à la question entière");
@@ -316,7 +337,7 @@ public class QuizManager : MonoBehaviour
                 // On choisit la question déjà rencontrée avec la plus faible proba d'acquisition
                 // Calculer les probabilités d'acquisition actuelles (selon le temps passé depuis la dernière rencontre du mot et le nombre de rencontres de ce mot)
                 float[] probaAcquisActuelles = new float[PlayerPrefs.GetInt("NbMotsVocab")];
-                probaAcquisActuelles = vocUt.UpdateProbaAcquisitionPowLawPrac();
+                probaAcquisActuelles = vocUt.UpdateProbaAcquisitionOubli();
 
                 // On cherche l'indice de la question avec la plus faible proba d'acquisition actuelle
                 var minProba = -1.0;
@@ -376,7 +397,7 @@ public class QuizManager : MonoBehaviour
                 {
                     // Calculer les probabilités d'acquisition actuelles (selon le temps passé depuis la dernière rencontre du mot et le nombre de rencontres de ce mot)
                     float[] probaAcquisActuelles = new float[PlayerPrefs.GetInt("NbMotsVocab")];
-                    probaAcquisActuelles = vocUt.UpdateProbaAcquisitionPowLawPrac();
+                    probaAcquisActuelles = vocUt.UpdateProbaAcquisitionOubli();
 
                     // On cherche l'indice de la question avec la plus faible proba d'acquisition actuelle
                     var minProba = -1.0;
@@ -412,11 +433,10 @@ public class QuizManager : MonoBehaviour
             }
         }
 
-        // PB HERE !
         // NbQuestAvantNouvelle doit être non nul mais peut être supérieur à 0 (exprime le nb de questions ancienne avant d'en avoir une nouvelle) ou inférieur à 0 (exprime -le nb de questions nouvelle avant d'en avoir une ancienne)
         if (NbQuestAvantNouvelle < 0)
         {
-            if(NbNouvelleQuestion < (-1)*NbQuestAvantNouvelle) // PB les 2 valeurs bougent en mm tmps 
+            if(NbNouvelleQuestion < (-1)*NbQuestAvantNouvelle)
             {
                 // Dans ce cas, on pose encore une question sur un mot non encore rencontré
                 NbNouvelleQuestionTemp = NbNouvelleQuestion + 1; // On ne le change que si l'utilisateur a répondu à la question et pas tout de suite
@@ -435,7 +455,7 @@ public class QuizManager : MonoBehaviour
                 {
                     // Calculer les probabilités d'acquisition actuelles (selon le temps passé depuis la dernière rencontre du mot et le nombre de rencontres de ce mot)
                     float[] probaAcquisActuelles = new float[PlayerPrefs.GetInt("NbMotsVocab")];
-                    probaAcquisActuelles = vocUt.UpdateProbaAcquisitionPowLawPrac();
+                    probaAcquisActuelles = vocUt.UpdateProbaAcquisitionOubli();
 
                     // On cherche l'indice de la question avec la plus faible proba d'acquisition actuelle
                     var minProba = -1.0;
@@ -475,7 +495,7 @@ public class QuizManager : MonoBehaviour
                 // On choisit la question déjà rencontrée avec la plus faible proba d'acquisition
                 // Calculer les probabilités d'acquisition actuelles (selon le temps passé depuis la dernière rencontre du mot et le nombre de rencontres de ce mot)
                 float[] probaAcquisActuelles = new float[PlayerPrefs.GetInt("NbMotsVocab")];
-                probaAcquisActuelles = vocUt.UpdateProbaAcquisitionPowLawPrac();
+                probaAcquisActuelles = vocUt.UpdateProbaAcquisitionOubli();
 
                 // On cherche l'indice de la question avec la plus faible proba d'acquisition actuelle
                 var minProba = -1.0;
@@ -633,7 +653,7 @@ public class QuizManager : MonoBehaviour
     }
 
     // Fonction pour incrémenter le nombre d'ancienne question rencontré
-    public void IncrementeNbQuestAvantNouvelle(){ // PB peut etre ajouter des détails comme la taille de 10 dans le cahier des charges
+    public void IncrementeNbQuestAvantNouvelle(){
         // NbQuestAvantNouvelle doit être non nul mais peut être supérieur à 0 (exprime le nb de questions ancienne avant d'en avoir une nouvelle) ou inférieur à 0 (exprime -le nb de questions nouvelle avant d'en avoir une ancienne)
         
         if (NbQuestAvantNouvelleTemp < 10) // Doit être entre -10 et 10
@@ -644,12 +664,11 @@ public class QuizManager : MonoBehaviour
         if (NbQuestAvantNouvelleTemp == 0) 
         {
             NbQuestAvantNouvelleTemp = 1;
-            // PB on passe de l'autre côté, on remet les compteurs à 0 ?
         }
     }
 
     // Fonction pour décrémenter le nombre d'ancienne question rencontré
-    public void DecrementeNbQuestAvantNouvelle(){ // PB 
+    public void DecrementeNbQuestAvantNouvelle(){
         // NbQuestAvantNouvelle doit être non nul mais peut être supérieur à 0 (exprime le nb de questions ancienne avant d'en avoir une nouvelle) ou inférieur à 0 (exprime -le nb de questions nouvelle avant d'en avoir une ancienne)
 
         if (NbQuestAvantNouvelleTemp > -10) // Doit être entre -10 et 10
@@ -660,7 +679,6 @@ public class QuizManager : MonoBehaviour
         if (NbQuestAvantNouvelleTemp == 0) 
         {
             NbQuestAvantNouvelleTemp = -1;
-            // PB on passe de l'autre côté, on remet les compteurs à 0 ?
         }
     }
 
@@ -672,7 +690,7 @@ public class QuizManager : MonoBehaviour
         var nbIteMax = 4; // Nombre maximum d'itérations avant de génerer les questions "normalement" 
         //PB prendre en compte si on n a pas assez de donnees sur tous les cas possibles
 
-        // UnityEngine.Debug.Log("Initialisation ite " + numIte + " avec nbBienRep = " + nbBienRep + "et nbMalRep = " + nbMalRep);
+        UnityEngine.Debug.Log("Initialisation ite " + numIte + " avec nbBienRep = " + nbBienRep + "et nbMalRep = " + nbMalRep);
 
         // PB sauvegarder les données d'hésitation de l'utilisateur grâce à cette initialisation
         // On fait l'initialisation jusqu'à ce que l'on ai rencontré une fois les deux cas de figure ou jusqu'à un nombre défini d'itération
@@ -700,7 +718,7 @@ public class QuizManager : MonoBehaviour
                 // Sinon, on commence toujours par poser la question sous forme de QCM
                 // UnityEngine.Debug.Log("Iteration " + numIte + " QCM");
                 TypeQuestion = "QCM";
-                QuestionCourrante = ((int)numIte*(PlayerPrefs.GetInt("NbMotsVocab")-1)/nbIteMax); // On prend des mots espacés dans la base de question (du mot numéro 0 au dernier d'indice (nbMotVocab-1) puisque les indices commencent à 0)
+                QuestionCourrante = ((int)Math.Floor((double)numIte*(PlayerPrefs.GetInt("NbMotsVocab")-1)/nbIteMax)); // On prend des mots espacés dans la base de question (du mot numéro 0 au dernier d'indice (nbMotVocab-1) puisque les indices commencent à 0)
                 
                 // On affiche la question choisie
                 afficherPanneauEnFctTypeQuestion();
@@ -871,7 +889,7 @@ public class QuizManager : MonoBehaviour
                 TypeQuestion = loadedDataInit.TypeQuestion; 
                 NbAncienneQuestionTemp = loadedDataInit.NbAncienneQuestionTemp;
                 NbNouvelleQuestionTemp = loadedDataInit.NbNouvelleQuestionTemp;
-                IndQuestNonRencontrees = new List<int>(); // PB A SAUVEGARDER
+                IndQuestNonRencontrees = new List<int>(); 
                 IndQuestNonRencontrees = loadedDataInit.IndQuestNonRencontrees; // PB Copy de list
 
                 // UnityEngine.Debug.Log("IndQuestNonRencontrees CHARGE = " + IndQuestNonRencontrees + " de taille " + IndQuestNonRencontrees.Count);
