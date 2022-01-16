@@ -37,20 +37,27 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\ReponseScript.cs" />
+     <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\NotEyeTrackingReleated\ToggleCodeExample.cs" />
      <Compile Include="Assets\Scripts\UserStats.cs" />
      <Compile Include="Assets\Scripts\DataSaver.cs" />
      <Compile Include="Assets\Scripts\QuestionReponse.cs" />
      <Compile Include="Assets\Scripts\FicheManager.cs" />
+     <Compile Include="Assets\Scripts\UserTraces.cs" />
      <Compile Include="Assets\Scripts\UserInitialisation.cs" />
+     <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\PrintGazePosition.cs" />
      <Compile Include="Assets\Scripts\QuizManager.cs" />
+     <Compile Include="Assets\Scripts\UserSelectionMenu.cs" />
+     <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\ShowNoGazeDetection.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\MenuUtilisateur.cs" />
+     <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\GazePlotter.cs" />
      <Compile Include="Assets\Scripts\VocabUtilisateur.cs" />
+     <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\NotEyeTrackingReleated\SetBackground.cs" />
      <Compile Include="Assets\Scripts\HesitationManager.cs" />
      <Compile Include="Assets\Scripts\OculometreManager.cs" />
      <Compile Include="Assets\Scripts\CsvReader.cs" />
-     <Compile Include="Assets\Scripts\UserSelectionMenu.cs" />
-     <Compile Include="Assets\Scripts\UserTraces.cs" />
+     <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\CloudPointVisualizer.cs" />
+     <Compile Include="Assets\Scripts\SignaleRegardOcu.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.24f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -678,6 +685,12 @@
     <Reference Include="UnityEngine.UI">
         <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="TobiiSDK">
+        <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\TobiiSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="TobiiXRG2OM">
+        <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\TobiiXRG2OM.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Mathematics">
         <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
     </Reference>
@@ -686,6 +699,9 @@
     </Reference>
     <Reference Include="Unity.2D.Animation.Triangle.Runtime">
         <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\Unity.2D.Animation.Triangle.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="TobiiSDK.Editor">
+        <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\TobiiSDK.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.Animation.Runtime">
         <HintPath>C:\Users\Mimis\EVHI-Projet\Library\ScriptAssemblies\Unity.2D.Animation.Runtime.dll</HintPath>

@@ -100,7 +100,7 @@ namespace Tobii.Gaming.Examples.GazePointData
 				
 
 				//Debug.Log(goodBound);
-				//Debug.Log(goodBound + " " + roundedSampleInput.x + " " + roundedSampleInput.y);
+				UnityEngine.Debug.Log(goodBound + " " + roundedSampleInput.x + " " + roundedSampleInput.y);
 
 				// Verifie si le point de l'eye tracking est dans le rectangle hitbox
 				for (int i = 0; i < NbRep; i++)

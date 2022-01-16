@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.tobii.gaming.sdk": {
+      "version": "file:C:/Users/Mimis/OneDrive/Documents/GitHub/Projet-EVHI/TME Oculomètre/TobiiUnitySDK",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.2d.animation": {
       "version": "5.0.9",
       "depth": 0,

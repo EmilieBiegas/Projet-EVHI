@@ -49,6 +49,7 @@ public class QuizManager : MonoBehaviour
     private int nbCarRep; // Le nombre de caractères entrés par l'utilisateur pour sa réponse en champs de saisie lors d'une question à réponse entière
     private bool loadAnciennePartie; // Booléen qui indique si on a load une ancienne partie (true) ou non (false)
     private bool Repondu; // Booléen qui indique si l'utilisateur a répondu à la question courrante ou non
+    private bool ChronoEnMarche; // Booléen qui indique si le chronomètre est en marche (true), ou en pause (false)
     // PB il y a d'autres attributs plus bas au dessus de l'initialisation
     void Start(){ // Pour l'initialisation
         // UnityEngine.Debug.Log("START DU QUIZ MANAGER");
@@ -63,6 +64,7 @@ public class QuizManager : MonoBehaviour
 
         // Pour le calcul de la vitesse de sélection 
         timer = new Stopwatch();
+        ChronoEnMarche = true;
         
         Initialisation();
     }
@@ -114,8 +116,8 @@ public class QuizManager : MonoBehaviour
         // Temps passé en secondes :
         float floatTimeSpan = ((float)days*24*3600) + ((float)hours*3600) + ((float)minutes*60) + (float)seconds + ((float)milliseconds/1000);
         UnityEngine.Debug.Log("Temps de sélection : " + floatTimeSpan + "secondes");
-        // On enregistre ce temps dans le gérant d'hésitation
-        hesitationManager.vitessesSelection[QuestionCourrante].Add(floatTimeSpan);
+        // On enregistre ce temps (trace) dans le gérant d'hésitation
+        hesitationManager.vitessesSelection[QuestionCourrante].Add(new Tuple<float, bool>(floatTimeSpan, correct));
         // UnityEngine.Debug.Log("vitessesSelection[" + QuestionCourrante + "] = " + hesitationManager.vitessesSelection[QuestionCourrante]);
         // hesitationManager.ComparaisonVitesseSelection();
 
@@ -186,8 +188,6 @@ public class QuizManager : MonoBehaviour
         // Temps passé en secondes :
         float floatTimeSpan = ((float)days*24*3600) + ((float)hours*3600) + ((float)minutes*60) + (float)seconds + ((float)milliseconds/1000);
         UnityEngine.Debug.Log("Temps d'entrée de texte : " + floatTimeSpan + "secondes");
-        // On enregistre ce temps dans le gérant d'hésitation
-        hesitationManager.vitessesEntreeTexte[QuestionCourrante].Add(floatTimeSpan);
         // UnityEngine.Debug.Log("vitessesEntreeTexte[" + QuestionCourrante + "] = " + hesitationManager.vitessesEntreeTexte[QuestionCourrante]);
         // hesitationManager.ComparaisonVitesseEntreeTexte(nbCarRep);
 
@@ -202,18 +202,24 @@ public class QuizManager : MonoBehaviour
         // UnityEngine.Debug.Log("Meme rep entree ? " + bonneRepEntree);
         if (bonneRepEntree == false)
         {
-            if (QnA[QuestionCourrante].ReponseCorrecte.ToLower().Substring(0,2) == "to")
+            if (ReponseUtilisateur.Length > 3)
             {
-                // UnityEngine.Debug.Log("Bonne réponse commence par to");
-                bonneRepEntree = (ReponseUtilisateur.ToLower() == QnA[QuestionCourrante].ReponseCorrecte.ToLower().Substring(3));
-            }
+                if (QnA[QuestionCourrante].ReponseCorrecte.ToLower().Substring(0,2) == "to")
+                {
+                    // UnityEngine.Debug.Log("Bonne réponse commence par to");
+                    bonneRepEntree = (ReponseUtilisateur.ToLower() == QnA[QuestionCourrante].ReponseCorrecte.ToLower().Substring(3));
+                }
 
-            if (ReponseUtilisateur.ToLower().Substring(0,2) == "to")
-            {
-                // UnityEngine.Debug.Log("Réponse donnée commence par to");
-                bonneRepEntree = (ReponseUtilisateur.ToLower().Substring(3) == QnA[QuestionCourrante].ReponseCorrecte.ToLower());
+                if (ReponseUtilisateur.ToLower().Substring(0,2) == "to")
+                {
+                    // UnityEngine.Debug.Log("Réponse donnée commence par to");
+                    bonneRepEntree = (ReponseUtilisateur.ToLower().Substring(3) == QnA[QuestionCourrante].ReponseCorrecte.ToLower());
+                }
             }
         }
+        // On enregistre ce temps (trace) dans le gérant d'hésitation
+        hesitationManager.AjoutVitesseEntreeTexte(QuestionCourrante, floatTimeSpan, nbCarRep, bonneRepEntree);
+
         // UnityEngine.Debug.Log("QnA[QuestionCourrante].ReponseCorrecte = " + QnA[QuestionCourrante].ReponseCorrecte + " et ReponseUtilisateur = " + ReponseUtilisateur); // OK, .ToLower et .Sustring ne modifient pas la chaîne d'origine
         // UnityEngine.Debug.Log("Meme rep entree sans le to ? " + bonneRepEntree);
 
@@ -268,7 +274,7 @@ public class QuizManager : MonoBehaviour
             {
                 // UnityEngine.Debug.Log("Iteration " + numIte + " a répondu à la question entière CORRECTEMENT");
                 nbBienRep += 1;
-                // PB ajouter (le temps de sélection, d'entrée de texte et) les données occulomètriques de cette question dans les données "sûr"
+                // PB HERE ajouter (le temps de sélection, d'entrée de texte et) les données occulomètriques de cette question dans les données "sûr"
             }else
             {
                 // UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu à la question entière");
@@ -430,6 +436,9 @@ public class QuizManager : MonoBehaviour
                 }
 
                 NbQuestAvantNouvelle = NbQuestAvantNouvelleTemp; // On met à jour les caractèristiques du nouveau cycle maintenant que l'on en commence un nouveau (et pas avant)  
+                // On met à jour les niveaux de l'utilisateur en prenant en compte l'ensemble des traces récoltées
+                hesitationManager.MajNivEntreeeTexteTrace();
+                hesitationManager.MajNivSelectionTraces();
             }
         }
 
@@ -530,6 +539,9 @@ public class QuizManager : MonoBehaviour
                 }
                 QuestionCourrante = minInd;   
                 NbQuestAvantNouvelle = NbQuestAvantNouvelleTemp; // On met à jour les caractèristiques du nouveau cycle maintenant que l'on en commence un nouveau (et pas avant)         
+                // On met à jour les niveaux de l'utilisateur en prenant en compte l'ensemble des traces récoltées
+                hesitationManager.MajNivEntreeeTexteTrace();
+                hesitationManager.MajNivSelectionTraces();
             }
         }
         // Test choisir la question la moins posée //PB a changer plus tard
@@ -551,10 +563,18 @@ public class QuizManager : MonoBehaviour
         // }
         // QuestionCourrante = minInd;
 
-       
 
         // Si la question a déjà été rencontrée et que l'utilisateur avait bien répondu à ce moment là, on propose alors la question sous forme Entier (et pas QCM) //PB a changer plus tard
-        if (vocUt.nbRencontres[QuestionCourrante] > 0 && vocUt.probaAcquisition[QuestionCourrante] > 0.75) 
+        // if (vocUt.nbRencontres[QuestionCourrante] > 0 && vocUt.probaAcquisition[QuestionCourrante] > 0.75) 
+        // {
+        //     TypeQuestion = "Entier";
+        // }else
+        // {
+        //     TypeQuestion = "QCM";
+        // }
+
+        // Si la question a déjà été rencontrée et que l'utilisateur s'est amélioré sur ce mot, on propose alors la question sous forme Entier (et pas QCM) //PB a changer plus tard
+        if (vocUt.nbRencontres[QuestionCourrante] > 0 && hesitationManager.Amelioration(QuestionCourrante)) 
         {
             TypeQuestion = "Entier";
         }else
@@ -736,7 +756,7 @@ public class QuizManager : MonoBehaviour
     // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à un QCM (après avoir cliqué sur le bouton suivant)
     void InitialisationReponduQCM(){
         if (RepEntreeOK)
-        { // PB Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
+        {   // PB Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
             // UnityEngine.Debug.Log("Iteration " + numIte + " a répondu au QCM CORRECTEMENT");
             // Si l'utilisateur clique sur la bonne réponse, on lui repose la question sous forme d'écriture complète
             TypeQuestion = "Entier";
@@ -751,7 +771,7 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    void Update() // Fonction appelée toute les frame
+    void Update() // Fonction appelée toute les frames
     {
         //Detecter lorsqu'on appui sur la touche entrée 
         if (Input.GetKeyDown(KeyCode.Return))
@@ -766,7 +786,18 @@ public class QuizManager : MonoBehaviour
                     questionSuivante();    
                 } 
             }               
-        }        
+        } 
+
+        // Si l'utilisateur ne regarde plus l'écran et que le chronomètre est en marche, on arrête le chronomètre
+        if(ChronoEnMarche == true && PlayerPrefs.GetInt("ChronosEnPause") == 1){
+            timer.Stop();
+            ChronoEnMarche = false;
+        }
+        // Lorsque l'utilisateur regarde de nouveau l'écran et que le chronomètre est arrêté, on relance le chronomètre     
+        if(ChronoEnMarche == false && PlayerPrefs.GetInt("ChronosEnPause") == 0){
+            timer.Start(); // On reprend le chronomètre là où il s'était arrêté
+            ChronoEnMarche = true;
+        }  
     }
 
     // Fonction appelée lors de l'ouverture de la scène QCM
@@ -780,10 +811,6 @@ public class QuizManager : MonoBehaviour
         {
             var NumJoueur = PlayerPrefs.GetInt("NumJoueur"); // On a le num du joueur qui joue, il faut ensuite charger ses données
             // UnityEngine.Debug.Log("Joueur en train de jouer : " + NumJoueur);
-
-            // PB on a changé Userstat en mettant direct les probaAcquis, nbRencontre et dateDerniereRencontre plutot que'un vocabUtilisateur
-            // PB UserStats loadedData = new UserStats(); 
-            // PB loadedData.vocabUtilisateur = gameObject.AddComponent(typeof(VocabUtilisateur)) as VocabUtilisateur; // loadedData.vocabUtilisateur = new VocabUtilisateur();
             
             // *****
             // On charge les données statistiques du joueur concerné 
@@ -797,6 +824,7 @@ public class QuizManager : MonoBehaviour
                 // On initialise les données de vocabulaire de l'utilisateur
                 vocUt.Initialise();
                 hesitationManager.NivDefaut();
+                hesitationManager.oculometreManager.InitialiseListesOcu();
             }else
             {
                 // Si il y a quelque chose dans les données chargées, on les charge
@@ -835,6 +863,9 @@ public class QuizManager : MonoBehaviour
 
                 hesitationManager.nivSelection = loadedData.nivSelection;
                 hesitationManager.nivEntreeTexte = loadedData.nivEntreeTexte;
+                hesitationManager.oculometreManager.occulaireHesite = new List<Vector2>(loadedData.occulaireHesite);
+                hesitationManager.oculometreManager.occulaireSur = new List<Vector2>(loadedData.occulaireSur);
+                UnityEngine.Debug.Log("Liste hesitation : "+hesitationManager.oculometreManager.occulaireHesite);
             }
             
             // Affichage des données chargées
@@ -901,45 +932,49 @@ public class QuizManager : MonoBehaviour
             // UnityEngine.Debug.Log("loadAnciennePartie = " + loadAnciennePartie);
 
             // *****
-            // On charge les données historiques d'hésitation du joueur concerné // PB A COMPLETER POUR CHARGEMENT DES DONNEES
-            // UnityEngine.Debug.Log("ON CHARGE LES DONNEES HISTORIQUES");
+            // On charge les données historiques de trace d'hésitation du joueur concerné 
+            hesitationManager.vitessesSelection = DataSaver.ChargerTraces("TracesSelectJ"+ PlayerPrefs.GetInt("NumJoueur"));
+            hesitationManager.vitessesEntreeTexte = DataSaver.ChargerTraces("TracesTextJ"+ PlayerPrefs.GetInt("NumJoueur"));
 
-            hesitationManager.ListesDefaut(); // PB on met les listes par défaut (à changer qd on charge les listes)
 
-            // PB A COMPLETER POUR CHARGEMENT DES DONNEES
-            // UserIn loadedDataHist = DataSaver.loadData<UserIn>("Hesitation_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
-
+            /** PB
+            // UnityEngine.Debug.Log("ON CHARGE LES DONNEES DE TRACE");
+            UserTraces loadedDataTrace = DataSaver.loadData<UserTraces>("Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur")); 
+            // UserTraces loadedDataTrace = DataSaver.ReadFromJsonFile<UserTraces>("Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur")); // PB
             // UnityEngine.Debug.Log("LoadedData = " + loadedDataInit);
-            // if (loadedDataInit == null || EqualityComparer<UserInitialisation>.Default.Equals(loadedDataInit, default(UserInitialisation)))
-            // {
-            //     UnityEngine.Debug.Log("Aucune donnée d'initialisation associée à ce joueur pour l'instant");
-            //     // On indique que l'on n'a pas load d'ancienne partie (c'est une toute nouvelle partie)
-            //     loadAnciennePartie = false;
-            //     // On initialise les attributs du tout nouvel utilisateur pour qu'il puisse commencer sa partie
-            //     InitialiseUserInitialisation();
-            // }else
-            // {
-            //     UnityEngine.Debug.Log("Chargement des données d'initialisation associée à ce joueur...");
-            //     // Si il y a quelque chose dans les données chargées, on les charge
-            //     // Mise à jour des données du joueur
-            //     nbBienRep = loadedDataInit.nbBienRep;
-            //     nbMalRep = loadedDataInit.nbMalRep;
-            //     numIte = loadedDataInit.numIte;
-            //     inInitialisation = loadedDataInit.inInitialisation;
-            //     RepEntreeOK = loadedDataInit.RepEntreeOK;
-            //     NbQuestAvantNouvelle = loadedDataInit.NbQuestAvantNouvelle;
-            //     NbAncienneQuestion = loadedDataInit.NbAncienneQuestion;
-            //     NbQuestionsTotales = loadedDataInit.NbQuestionsTotales;
-            //     inQCM = loadedDataInit.inQCM;
-            //     QuestionCourrante = loadedDataInit.QuestionCourrante; 
-            //     TypeQuestion = loadedDataInit.TypeQuestion; 
-            //     NbAncienneQuestionTemp = loadedDataInit.NbAncienneQuestionTemp;
-
-            //     // On indique que l'on a load une ancienne partie (possiblement en cours d'initialisation)
-            //     loadAnciennePartie = true;  
-            // }
-            // UnityEngine.Debug.Log("nbBienRep =" + nbBienRep + "; nbMalRep = " + nbMalRep + "; numIte = " + numIte + "; inInitialisation = " + inInitialisation + "; RepEntreeOK = " + RepEntreeOK + "; NbQuestAvantNouvelle = " + NbQuestAvantNouvelle + "; NbAncienneQuestion = " + NbAncienneQuestion + "; NbQuestionsTotales = " + NbQuestionsTotales + "; inQCM = " + inQCM + "; QuestionCourrante = " + QuestionCourrante + "; TypeQuestion = " + TypeQuestion + "; NbAncienneQuestionTemp = " + NbAncienneQuestionTemp);
-            // UnityEngine.Debug.Log("loadAnciennePartie = " + loadAnciennePartie);
+            if (loadedDataTrace == null || EqualityComparer<UserTraces>.Default.Equals(loadedDataTrace, default(UserTraces)))
+            {
+                // UnityEngine.Debug.Log("Aucune donnée de trace associée à ce joueur pour l'instant");
+                // On initialise les attributs du tout nouvel utilisateur pour qu'il puisse commencer sa partie
+                hesitationManager.ListesDefaut(); // On met les listes par défaut 
+            }else
+            {
+                UnityEngine.Debug.Log("PB LOADED DATA TRACE : "+loadedDataTrace);
+                UnityEngine.Debug.Log("PB LOADED DATA TRACE VITESSE SELECTION : "+loadedDataTrace.vitessesSelection);
+                UnityEngine.Debug.Log("PB LOADED DATA TRACE VITESSE ENTREE TEXT : "+loadedDataTrace.vitessesEntreeTexte);
+                // UnityEngine.Debug.Log("Chargement des données de trace associée à ce joueur...");
+                // Si il y a quelque chose dans les données chargées, on les charge
+                // Mise à jour des données du joueur
+                hesitationManager.ListesDefaut(); // On met les listes par défaut
+                if (loadedDataTrace.vitessesSelection==null)
+                {
+                    UnityEngine.Debug.Log("PROBLEME, VITESSE SELECTION NULL");
+                }
+                for (int i = 0; i < loadedDataTrace.vitessesSelection.Length; i++)
+                {
+                    if (loadedDataTrace.vitessesSelection[i].Count>0)
+                    {
+                        hesitationManager.vitessesSelection[i] = new List<Tuple<float, bool>>(loadedDataTrace.vitessesSelection[i]); 
+                    }
+                }
+                for (int i = 0; i < loadedDataTrace.vitessesEntreeTexte.Length; i++)
+                {
+                    if (loadedDataTrace.vitessesEntreeTexte[i].Count>0)
+                    {
+                        hesitationManager.vitessesEntreeTexte[i] = new List<Tuple<float, bool>>(loadedDataTrace.vitessesEntreeTexte[i]); 
+                    }
+                }
+            } **/
 
             // *****
             // On initialise le niveau de vitesse d'entrée de texte de l'utilisateur avec les données récupérées lors de sa saisie de pseudo 

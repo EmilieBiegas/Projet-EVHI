@@ -11,7 +11,7 @@ public class VocabUtilisateur : MonoBehaviour
     public int[] nbRencontres; //Un tableau du nombre de fois où le mot a été rencontré de la même taille que QnA de QuizManager ou myQr de CsvReader (càd le nombre de mots de vocabulaire)
     public string[] dateDerniereRencontre; //Un tableau de date de la dernière rencontre au format "MM/dd/yyyy HH:mm:ss" pour pouvoir appliquer la Power Law of Practice
     // Paramètre beta permettant de prendre plus ou moins en compte la correction de la réponse donnée et l'hésitation de l'utilisateur dans la proba d'acquisition du mot de vocabulaire
-    private const float beta = 0.5f; // PB Beta à 1 : on ne prends en compte que la correction de la réponse donnée et pas l'hésitation
+    private const float beta = 0.5f; // Paramètre entre 0 et 1, PB Beta à 1 : on ne prends en compte que la correction de la réponse donnée et pas l'hésitation
 
     public void Initialise() // Initialisation des statistiques (à n'appeler que pour un nouvel utilisateur)
     {

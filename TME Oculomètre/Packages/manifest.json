@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.tobii.gaming.sdk": "file:C:/Users/Emilie/Documents/Emilie/M2/M2_EVHI/TobiiUnitySDK",
+    "com.tobii.gaming.sdk": "file:../TobiiUnitySDK",
     "com.unity.2d.animation": "5.0.9",
     "com.unity.2d.pixel-perfect": "4.0.1",
     "com.unity.2d.psdimporter": "4.1.2",

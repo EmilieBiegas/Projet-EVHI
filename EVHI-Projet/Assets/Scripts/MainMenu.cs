@@ -14,6 +14,7 @@ public class MainMenu : MonoBehaviour
     public HesitationManager hesitationManager; // Pour la sauvegarde des données d'hésitation qui s'effectue lorsque l'on revient au menu depuis une question
     public QuizManager quizManager; // Pour la sauvegarde des données d'initialisation qui s'effectue lorsque l'on revient au menu depuis une question
     private Stopwatch timer; // Le chronomètre permettant de mesurer le temps de sélection de l'utilisateur dans le menu
+    private bool ChronoEnMarche; // Booléen qui indique si le chronomètre est en marche (true), ou en pause (false)
 
     public void PlayGame(int NumJ){ // Associé au bouton jouer
         PlayerPrefs.SetInt("NumJoueur", NumJ); // On précise quel joueur joue pour pouvoir récupérer ses données et définir les données de ce joueur
@@ -134,8 +135,8 @@ public class MainMenu : MonoBehaviour
     }
 
     public void BackMenuFromQuestion(){ // Appelée lorsque l'on retourne au menu principal depuis une question, on sauvegarde à ce moment les données du joueur
-        // UnityEngine.Debug.Log("DANS BACK MENU, ON SAVE DATA :");
-
+        // On enregistre le score du joueur en cours de jeu
+        PlayerPrefs.SetFloat("ScoreJ" + PlayerPrefs.GetInt("NumJoueur"), hesitationManager.Score());
         // On enregistre les données statistique utilisateur
         UserStats saveDataStat = new UserStats();
         // PB on doit enregistrer toutes les stats
@@ -144,6 +145,8 @@ public class MainMenu : MonoBehaviour
         saveDataStat.dateDerniereRencontre = vocabUt.dateDerniereRencontre;
         saveDataStat.nivSelection = hesitationManager.nivSelection; 
         saveDataStat.nivEntreeTexte = hesitationManager.nivEntreeTexte;
+        saveDataStat.occulaireHesite = hesitationManager.oculometreManager.occulaireHesite; // PB liste copy()?
+        saveDataStat.occulaireSur = hesitationManager.oculometreManager.occulaireSur;
         // Sauvegarde des données de UserStats dans un fichier nommé Stats_Joueur suivi du numéro du joueur
         DataSaver.saveData(saveDataStat, "Stats_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
@@ -167,24 +170,51 @@ public class MainMenu : MonoBehaviour
         saveDataInit.NbAncienneQuestionTemp  = quizManager.NbAncienneQuestionTemp;
         saveDataInit.NbNouvelleQuestionTemp  = quizManager.NbNouvelleQuestionTemp;
         saveDataInit.IndQuestNonRencontrees = quizManager.IndQuestNonRencontrees; // PB copy de liste ??
-
-        // UnityEngine.Debug.Log("IndQuestNonRencontrees SAUVEGARDE = " + saveDataInit.IndQuestNonRencontrees + " de taille " + saveDataInit.IndQuestNonRencontrees.Count);
-
         // Sauvegarde des données de UserInitialisation dans un fichier nommé Initialisation_Joueur suivi du numéro du joueur
         DataSaver.saveData(saveDataInit, "Initialisation_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
+
+
+        // On enregistre les données de traces utilisateur
+        DataSaver.SauvegarderTraces(hesitationManager.vitessesSelection, "TracesSelectJ"+ PlayerPrefs.GetInt("NumJoueur"));
+        DataSaver.SauvegarderTraces(hesitationManager.vitessesEntreeTexte, "TracesTextJ"+ PlayerPrefs.GetInt("NumJoueur"));
+
+
+        /** PB  UserTraces saveDataTrace = new UserTraces();
+        // Initialisation des listes de vitesses de sélection et d'entrée de texte
+        saveDataTrace.vitessesSelection = new List<Tuple<float, bool>>[PlayerPrefs.GetInt("NbMotsVocab")]; 
+        saveDataTrace.vitessesEntreeTexte = new List<Tuple<float, bool>>[PlayerPrefs.GetInt("NbMotsVocab")];
+        // On fait une copie en profondeur
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
+        {
+            if (hesitationManager.vitessesSelection[i].Count>0)
+            {
+                saveDataTrace.vitessesSelection[i] = new List<Tuple<float, bool>>(hesitationManager.vitessesSelection[i]);
+            }else{
+                saveDataTrace.vitessesSelection[i] = new List<Tuple<float, bool>>();
+            }
+            
+            if (hesitationManager.vitessesEntreeTexte[i].Count>0)
+            {
+                saveDataTrace.vitessesEntreeTexte[i] = new List<Tuple<float, bool>>(hesitationManager.vitessesEntreeTexte[i]);
+            }else{
+                saveDataTrace.vitessesEntreeTexte[i] = new List<Tuple<float, bool>>();
+            }
+        }
+        // UnityEngine.Debug.Log("VITESSE SELECTION sauvegardée de taille : "+saveDataTrace.vitessesSelection.Length);
+        // Sauvegarde des données de UserTraces dans un fichier nommé Traces_Joueur suivi du numéro du joueur
+        DataSaver.saveData(saveDataTrace, "Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur")); 
+        // DataSaver.WriteToJsonFile<UserTraces>("Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur"), saveDataTrace); // PB 
 
         // Affichage des données sauvegardées
         for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
         {
-            // UnityEngine.Debug.Log("Proba d'acquisition [" + i + "] =" + saveData.probaAcquisition[i]);
-            // UnityEngine.Debug.Log("Nb rencontres [" + i + "] =" + saveData.nbRencontres[i]);
-            if (saveDataStat.dateDerniereRencontre[i] != null) // PB Attention, dateDerniereRencontre peut être null ou vide ""
+            if (saveDataTrace.vitessesSelection[i].Count > 0) 
             {
                 // DateTime copyDateDerniereRencontre = saveData.dateDerniereRencontre[i]; // Pour ne pas transformer saveData.dateDerniereRencontre[i] en string
-                // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + saveData.dateDerniereRencontre[i]);
+                UnityEngine.Debug.Log("Sauvegarde vitessesSelection [" + i + "] =" + saveDataTrace.vitessesSelection[i][0]);
                 // UnityEngine.Debug.Log(saveData.dateDerniereRencontre[i] + " de type " + saveData.dateDerniereRencontre[i].GetType());
             }
-        }
+        } **/
 
         //On load la scène de menu principal
         SceneManager.LoadScene("MainMenu"); 
@@ -224,7 +254,20 @@ public class MainMenu : MonoBehaviour
     void OnEnable(){  
         // On lance le chronomètre pour calculer la vitesse de selection de l'utilisateur
         timer = new Stopwatch();
+        ChronoEnMarche = true;
         timer.Start();
     }
     
+    void Update(){ // Fonction appelée toute les frames
+        // Si l'utilisateur ne regarde plus l'écran et que le chronomètre est en marche, on arrête le chronomètre
+        if(ChronoEnMarche == true && PlayerPrefs.GetInt("ChronosEnPause") == 1){
+            timer.Stop();
+            ChronoEnMarche = false;
+        }
+        // Lorsque l'utilisateur regarde de nouveau l'écran et que le chronomètre est arrêté, on relance le chronomètre     
+        if(ChronoEnMarche == false && PlayerPrefs.GetInt("ChronosEnPause") == 0){
+            timer.Start(); // On reprend le chronomètre là où il s'était arrêté
+            ChronoEnMarche = true;
+        } 
+    }
 }

@@ -14,14 +14,20 @@ public class MenuUtilisateur : MonoBehaviour
     public GameObject ButtonJoueur1; // Le bouton de sélection du joueur 1
     public GameObject ButtonJoueur2; // Le bouton de sélection du joueur 2
     public GameObject ButtonJoueur3; // Le bouton de sélection du joueur 3
+    public Text textScoreJ1; // Le texte de score du joueur 1
+    public Text textScoreJ2; // Le texte de score du joueur 2
+    public Text textScoreJ3; // Le texte de score du joueur 3
     private Stopwatch timerPseudo; // Le chronomètre permettant de chronomètrer le temps que l'utilisateur met pour entrer son pseudo
     private string PseudoUtilisateur; // Le pseudo choisi par l'utilisateur
     private int NumJoueur; // Le numéro du joueur en cours de jeu ou qui souhaite changer son pseudo (trouvable également dans les PlayerPrefs)
     private Stopwatch timerSelection; // Le chronomètre permettant de mesurer le temps de sélection de l'utilisateur dans le menu
-
+    private bool ChronoSelEnMarche; // Booléen qui indique si le chronomètre de sélection est en marche (true), ou en pause (false)
+    private bool ChronoPseudoEnMarche; // Booléen qui indique si le chronomètre d'entrée de pseudo est en marche (true), ou en pause (false)
+    private bool demarragePseudo; // Booléen qui indique si l'utilisateur est en train d'entrer son pseudo ou non
     public void GoMenuUtilisateur(){ //Retourner dans le menu utilisateur (pas dans le menu pseudos), appuyer sur Retour cache le panneau pseudo
         PanneauPseudo.SetActive(false); // On cache le panneau pseudo
         SetPseudos(); // On màj les pseudos
+        SetScores(); // On affiche les bons scores lorsque l'on ouvre le menu utilisateurs
     }
 
     public void GoMenuPseudo(int NumJ){ // Permet d'accéder au menu pseudos
@@ -44,6 +50,8 @@ public class MenuUtilisateur : MonoBehaviour
 
         // On lance le chronomètre de saisie de pseudo
         timerPseudo = new Stopwatch();
+        ChronoPseudoEnMarche = true;
+        demarragePseudo = true;
         timerPseudo.Start();
 
         // On fait en sorte que le champs de saisie soit automatiquement sélectionné (pas besoin de cliquer dessus)
@@ -60,6 +68,7 @@ public class MenuUtilisateur : MonoBehaviour
     public void ValiderPseudo(){ // Appellée lorsque l'utilisateur valide son choix de pseudo
         // Calcul de la vitesse d'entrée de texte (de son pseudo) de l'utilisateur
         timerPseudo.Stop();
+        demarragePseudo = false;
         TimeSpan timeTaken = timerPseudo.Elapsed;
 
         // On transforme la durée obtenue en float (nombre de secondes/minutes/heures écoulées) afin de l'enregistrer dans le gérant de l'hésitation
@@ -129,6 +138,31 @@ public class MenuUtilisateur : MonoBehaviour
         }       
     }
 
+    public void SetScores(){ // Fonction permettant d'afficher les bons scores (grâce à la sauvegarde des scores dans les PlayerPrefs)
+        // On affiche les scores précédemment sauvegardés
+        if (PlayerPrefs.HasKey("ScoreJ1"))
+        {
+            textScoreJ1.text = PlayerPrefs.GetFloat("ScoreJ1").ToString();
+        }else
+        {
+            textScoreJ1.text = "0"; // Affichage par défaut
+        }
+        if (PlayerPrefs.HasKey("ScoreJ2"))
+        {
+            textScoreJ2.text = PlayerPrefs.GetFloat("ScoreJ2").ToString();
+        }else
+        {
+            textScoreJ2.text = "0"; // Affichage par défaut
+        }
+        if (PlayerPrefs.HasKey("ScoreJ3"))
+        {
+            textScoreJ3.text = PlayerPrefs.GetFloat("ScoreJ3").ToString();
+        }else
+        {
+            textScoreJ3.text = "0"; // Affichage par défaut
+        }       
+    }
+
     public void AffichePopUpWarning(){ // Fonction permettant d'afficher le pop-up warning de l'écrasement des données utilisateur
         PopUpWarning.SetActive(true);
     }
@@ -171,8 +205,11 @@ public class MenuUtilisateur : MonoBehaviour
         // On efface toutes les données du joueur en question
         DataSaver.deleteData("Stats_Joueur" + NumJoueur); // Efface les statistiques du joueur
         DataSaver.deleteData("Initialisation_Joueur" + NumJoueur); // Efface les données d'initialisation du joueur
+        DataSaver.deleteData("TracesSelectJ" + NumJoueur); // Efface les traces de sélection du joueur
+        DataSaver.deleteData("TracesTextJ" + NumJoueur); // Efface les traces d'entrée de texte du joueur
         DataSaver.deleteData("SelectionMenuJ" + NumJoueur); // Efface les données de selection dans les menus du joueur
         PlayerPrefs.DeleteKey("PseudoJ" + NumJoueur); // Efface son pseudo
+        PlayerPrefs.DeleteKey("ScoreJ" + NumJoueur); // Efface son score
         PlayerPrefs.DeleteKey("TmpsEntreePseudoJ" + NumJoueur); // Efface le temps de saisie de son pseudo
 
         // On se rend sur la page de choix d'utilisateur (en cachant le warning)
@@ -184,19 +221,44 @@ public class MenuUtilisateur : MonoBehaviour
     void OnEnable()
     {
         SetPseudos(); // On affiche les bons pseudos lorsque l'on ouvre le menu utilisateurs
+        SetScores(); // On affiche les bons scores lorsque l'on ouvre le menu utilisateurs
 
         // On lance le chronomètre pour calculer la vitesse de selection de l'utilisateur
         timerSelection = new Stopwatch();
+        ChronoSelEnMarche = true;
+        ChronoPseudoEnMarche = false;
+        demarragePseudo = false;
         timerSelection.Start();
     }
 
-    void Update()
+    void Update() // Fonction appelée toute les frames
     {
         //Detecter lorsqu'on appui sur la touche entrée pour valider le pseudo entré
         if (Input.GetKeyDown(KeyCode.Return))
         {
             ValiderPseudo();                
         }
-        
+
+        // Si l'utilisateur ne regarde plus l'écran et que le chronomètre est en marche, on arrête le chronomètre
+        if(ChronoSelEnMarche == true && PlayerPrefs.GetInt("ChronosEnPause") == 1){
+            timerSelection.Stop();
+            ChronoSelEnMarche = false;
+        }
+        // Lorsque l'utilisateur regarde de nouveau l'écran et que le chronomètre est arrêté, on relance le chronomètre     
+        if(ChronoSelEnMarche == false && PlayerPrefs.GetInt("ChronosEnPause") == 0){
+            timerSelection.Start(); // On reprend le chronomètre là où il s'était arrêté
+            ChronoSelEnMarche = true;
+        }   
+
+        // Si l'utilisateur ne regarde plus l'écran et que le chronomètre est en marche, on arrête le chronomètre
+        if(ChronoPseudoEnMarche == true && PlayerPrefs.GetInt("ChronosEnPause") == 1){
+            timerPseudo.Stop();
+            ChronoPseudoEnMarche = false;
+        }
+        // Lorsque l'utilisateur regarde de nouveau l'écran et que le chronomètre est arrêté, on relance le chronomètre     
+        if(ChronoPseudoEnMarche == false && demarragePseudo == true && PlayerPrefs.GetInt("ChronosEnPause") == 0){
+            timerPseudo.Start(); // On reprend le chronomètre là où il s'était arrêté
+            ChronoPseudoEnMarche = true;
+        }       
     }
 }

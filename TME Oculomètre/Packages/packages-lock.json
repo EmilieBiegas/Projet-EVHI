@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.tobii.gaming.sdk": {
-      "version": "file:C:/Users/Emilie/Documents/Emilie/M2/M2_EVHI/TobiiUnitySDK",
+      "version": "file:../TobiiUnitySDK",
       "depth": 0,
       "source": "local",
       "dependencies": {}
