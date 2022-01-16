@@ -8,8 +8,10 @@ public class ReponseScript : MonoBehaviour
 {
     public bool isCorrect; // Indique si la réponse indiquée par l'utilisateur est correcte ou non
     public QuizManager quizManager; // Gérant de quiz associé
+    public int indReponseCorrespond; // Indice de reponse associé 
 
     public void ReponseQCM(){ // Appellée lorsque l'utilisateur répond à un QCM
+        quizManager.ficheManager.indReponseSelectionnee = indReponseCorrespond; // Pour update l'indice de réponse selectionné par utilisateur
         if(isCorrect){
             Debug.Log("Reponse correcte");
             quizManager.ReponduQCM(true); // On traite la réponse de l'utilisateur dans le quizManager (affichage des couleurs etc.)

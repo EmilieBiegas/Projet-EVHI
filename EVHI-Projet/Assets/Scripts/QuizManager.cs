@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-//using System.Text;
+//using System.Text; // PB régler les commentaires dans les using
 
 // Classe permettant de gérer le quiz
 public class QuizManager : MonoBehaviour
@@ -29,6 +29,7 @@ public class QuizManager : MonoBehaviour
     public GameObject EntreeRep; // Le champs de saisie de la réponse dans les questions à réponse entière
     public GameObject BonneRep; // Le champs de saisie (en mode lecture) permettant d'afficher la bonne réponse lorsque l'utilisateur s'est trompé dans les questions à réponse entière
     public HesitationManager hesitationManager; // L'objet gérant l'hésitation de l'utilisateur
+    public FicheManager ficheManager; // L'objet gérant les fiches
     public bool inInitialisation; // Indique si on est encore dans l'initialisation (true) ou non (false)
     public bool RepEntreeOK; // Indique si la réponse entrée est bonne (true) ou non (false)
     public int NbQuestAvantNouvelle; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié seulement lorsque le cycle en cours est terminé)
@@ -49,13 +50,19 @@ public class QuizManager : MonoBehaviour
     private int nbCarRep; // Le nombre de caractères entrés par l'utilisateur pour sa réponse en champs de saisie lors d'une question à réponse entière
     private bool loadAnciennePartie; // Booléen qui indique si on a load une ancienne partie (true) ou non (false)
     private bool Repondu; // Booléen qui indique si l'utilisateur a répondu à la question courrante ou non
-    private bool ChronoEnMarche; // Booléen qui indique si le chronomètre est en marche (true), ou en pause (false)
+    private bool ChronoEnMarche = false; // Booléen qui indique si le chronomètre est en marche (true), ou en pause (false)
     // PB il y a d'autres attributs plus bas au dessus de l'initialisation
     void Start(){ // Pour l'initialisation
         // UnityEngine.Debug.Log("START DU QUIZ MANAGER");
 
         // On commence par lire le CSV contenant les mots de vocabulaire
         CsvLu.readCSV();
+        CsvLu.readCSVExplications();
+        CsvLu.readCSVFauxAmis();
+        for (int i = 0; i < options.Length; i++)
+        {
+            options[i].GetComponent<ReponseScript>().indReponseCorrespond=i;
+        }
         QnA = CsvLu.myQr; // On récupère la liste de question/réponses obtenue avec le CsvReader
 
         // Le nombre de mots de vocabulaire est donné par la taille de la liste de question/réponses
@@ -101,10 +108,6 @@ public class QuizManager : MonoBehaviour
         vocUt.dateDerniereRencontre[QuestionCourrante] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"); // On met à jour la date de dernière rencontre du mot
         Repondu = true; // On a répondu à la question
         TimeSpan timeTaken = timer.Elapsed; // On regarde le temps passé sur le chronomètre
-        
-        // // PB pour l affichage : OK c'est bien le temps de sélection !
-        // string foo = "Temps de sélection: " + timeTaken.ToString(@"m\:ss\.fff"); // PB Attention, timeTaken est un string mtn
-        // UnityEngine.Debug.Log(foo);
 
         // On transforme la durée obtenue en float (nombre de secondes/minutes/heures écoulées) afin de l'enregistrer dans le gérant de l'hésitation
         int days, hours, minutes, seconds, milliseconds;
@@ -174,9 +177,6 @@ public class QuizManager : MonoBehaviour
         vocUt.dateDerniereRencontre[QuestionCourrante] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"); // On met à jour la date de dernière rencontre du mot
         Repondu = true; // On a répondu à la question
         TimeSpan timeTaken = timer.Elapsed; // On regarde le temps passé sur le chronomètre
-        // // PB pour l affichage : OK c'est bien le temps d'entrée de texte et le nombre de caractères entrés !
-        // string foo = "Temps d'entrée de texte: " + timeTaken.ToString(@"m\:ss\.fff") + "sur " + nbCarRep + " caractères"; // PB Attention, timeTaken est un string mtn
-        // UnityEngine.Debug.Log(foo);
 
         // On transforme la durée obtenue en float (nombre de secondes/minutes/heures écoulées) afin de l'enregistrer dans le gérant de l'hésitation
         int days, hours, minutes, seconds, milliseconds;
@@ -573,7 +573,7 @@ public class QuizManager : MonoBehaviour
         //     TypeQuestion = "QCM";
         // }
 
-        // Si la question a déjà été rencontrée et que l'utilisateur s'est amélioré sur ce mot, on propose alors la question sous forme Entier (et pas QCM) //PB a changer plus tard
+        // Si la question a déjà été rencontrée et que l'utilisateur s'est amélioré sur ce mot, on propose alors la question sous forme Entier (et pas QCM) 
         if (vocUt.nbRencontres[QuestionCourrante] > 0 && hesitationManager.Amelioration(QuestionCourrante)) 
         {
             TypeQuestion = "Entier";
@@ -634,9 +634,13 @@ public class QuizManager : MonoBehaviour
     public void AfficherFiche(){
         if (TypeQuestion == "QCM")
         {
+            ficheManager.QR=QnA[QuestionCourrante];
+            ficheManager.updateContenuFicheAideQCM();
             PanneauFicheQCM.SetActive(true);
         }else
         {
+            ficheManager.QR=QnA[QuestionCourrante];
+            ficheManager.updateContenuFicheAideQEnt(ReponseUtilisateur);
             PanneauFicheEntier.SetActive(true);
             // On doit cacher le champs de saisie de réponse, le champs de la bonne réponse et le bouton OK
             EntreeRep.SetActive(false);

@@ -667,6 +667,7 @@ MonoBehaviour:
   EntreeRep: {fileID: 721556485}
   BonneRep: {fileID: 694619419}
   hesitationManager: {fileID: 1295691358}
+  ficheManager: {fileID: 857359914}
   inInitialisation: 0
   RepEntreeOK: 0
   NbQuestAvantNouvelle: 1
@@ -1133,6 +1134,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 0}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!114 &478694625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1335,7 +1338,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecab23583364a49458814054c83fb4e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textAssetData: {fileID: 4900000, guid: 48bc129a0b5f670429cd24f85c874d17, type: 3}
+  textAssetData: {fileID: 4900000, guid: 2650952661b2a204ba2657059882c408, type: 3}
+  textExplications: {fileID: 4900000, guid: a017811df22774148a6f3c8e1fbf9d6f, type: 3}
+  textFauxAmis: {fileID: 4900000, guid: d46fefc4c7d51cd41824e035f004f30a, type: 3}
   myQr: []
 --- !u!4 &518164037
 Transform:
@@ -1870,6 +1875,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 192715049}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!61 &650495923
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2624,6 +2631,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62ad11e390eeb5749a0921c21d427ca4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ContenuFicheAideQCM: {fileID: 1166963437}
+  ContenuFicheAideQEnt: {fileID: 1848387116}
+  QR:
+    Question: 
+    Reponses: []
+    IndReponseCorrecte: 0
+    ReponseCorrecte: 
+    explicationBonneReponse:
+      mot: 
+      nature: 
+      exemple: 
+      definition: 
+    explicationsSupplement: []
+    fauxAmi:
+      fauxami: 
+      traduction: 
+  indReponseSelectionnee: 0
+  typeConfusion: 
 --- !u!4 &857359915
 Transform:
   m_ObjectHideFlags: 0
@@ -2932,6 +2957,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 0}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!114 &974579207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4147,6 +4174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 192715049}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!61 &1293379426
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5561,6 +5590,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 0}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!114 &1562530236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5646,6 +5677,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 0}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!114 &1563345403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6242,6 +6275,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 192715049}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!61 &1642905032
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7151,6 +7186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCorrect: 0
   quizManager: {fileID: 192715049}
+  indReponseCorrespond: 0
+  ficheManager: {fileID: 0}
 --- !u!61 &2046138525
 BoxCollider2D:
   m_ObjectHideFlags: 0

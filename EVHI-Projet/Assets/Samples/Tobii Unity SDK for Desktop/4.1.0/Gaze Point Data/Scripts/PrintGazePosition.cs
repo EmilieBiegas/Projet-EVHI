@@ -21,14 +21,12 @@ namespace Tobii.Gaming.Examples.GazePointData
 	/// </remarks>
 	public class PrintGazePosition : MonoBehaviour
 	{
-		// PB enlever les trucs inutiles
 		public Text xCoord;
 		public Text yCoord;
 		public GameObject GazePoint;
         public Canvas canvas; // Le canvas affichant le jeu
 		public GameObject[] cubes; // Liste des 4 boutons pour le QCM
-		private Camera camera;
-		private float tempo; // PB a enlever
+		private Camera mainCamera;
 		private int NbRep; // Le nombre de propositions de réponses aux QCM
 		private int DernierCubeRegardé; // L'indice du dernier cube regardé
 		private Stopwatch[] timer; // Les chronomètres des différentes propositions de réponse
@@ -37,8 +35,7 @@ namespace Tobii.Gaming.Examples.GazePointData
 
 		void Start()
 		{
-			tempo = 0;
-			camera = Camera.main;
+			mainCamera = Camera.main;
 
 			NbRep = 4; // PB 4 est le nombre de propositions de réponses
 			DernierCubeRegardé = -1; // On initialise le cube dernièrement regardé à -1 pour indiquer que c'est le début
@@ -81,15 +78,15 @@ namespace Tobii.Gaming.Examples.GazePointData
 				Vector3[] extents = new Vector3[NbRep];
 				for (int i = 0; i <NbRep; i++)
 				{
-					origin[i] = camera.WorldToScreenPoint(new Vector3(bounds[i].min.x, bounds[i].min.y, 0.0f));
-					extents[i] = camera.WorldToScreenPoint(new Vector3(bounds[i].max.x, bounds[i].max.y, 0.0f));
+					origin[i] = mainCamera.WorldToScreenPoint(new Vector3(bounds[i].min.x, bounds[i].min.y, 0.0f));
+					extents[i] = mainCamera.WorldToScreenPoint(new Vector3(bounds[i].max.x, bounds[i].max.y, 0.0f));
 				}
 
 				// Scale du canvas à la taille de l'ecran global
 				Vector3 originCanvas = new Vector3();
 				Vector3 extentsCanvas = new Vector3();
-				originCanvas = camera.WorldToScreenPoint(new Vector3(boundCanvas.min.x, boundCanvas.min.y, 0.0f));
-				extentsCanvas = camera.WorldToScreenPoint(new Vector3(boundCanvas.max.x, boundCanvas.max.y, 0.0f));
+				originCanvas = mainCamera.WorldToScreenPoint(new Vector3(boundCanvas.min.x, boundCanvas.min.y, 0.0f));
+				extentsCanvas = mainCamera.WorldToScreenPoint(new Vector3(boundCanvas.max.x, boundCanvas.max.y, 0.0f));
 				
 				// Redefinition de la hitbox adapté à la taille de l'ecran global
 				Rect[] goodBound = new Rect[NbRep];
@@ -115,25 +112,17 @@ namespace Tobii.Gaming.Examples.GazePointData
 					{
 						if(goodBound[i].Contains(new Vector3(roundedSampleInput.x, roundedSampleInput.y, 0)))
 						{
-							// Si c'est le ces, changer la couleur du bouton regardé
-							tempo += 5f * Time.deltaTime;
-							float tempo2 = (float) (Math.Sin(tempo) + 1f) / 2;
-							float tempo3 = (float)(Math.Cos(tempo) + 1f) / 2;
-							// UnityEngine.Debug.Log(tempo);
-							// cubes[i].GetComponent<Image>().color = new Color(1f, tempo2, tempo3); // On fait varier la couleur du cube regardé
-							
 							if (DernierCubeRegardé != i) // Dans ce cas, l'utilisateur a bougé son regard sur un autre cube
 							{
 								// UnityEngine.Debug.Log("Utilisateur a changé de cube regardé, il regardais " + DernierCubeRegardé + " et regarde désormais " + i);
 								DernierCubeRegardé = i; // On indique que le dernier cube regardé est le cube i
 								NbChangeCube += 1; // On a changé de cube regardé
-								// PB on lance (ou relance) le timer du temps passé sur ce mot
+								// On lance (ou relance) le timer du temps passé sur ce mot
 								timer[i].Start(); // Pas de Reset comme on veut que les temps s'ajoutent
 							}
 						}
 						else
 						{
-							//cube.GetComponent<Image>().color = new Color(1, 0, 1); // PB
 							timer[i].Stop(); // On arrête le chronomètre de tous les rectangles non regardés 
 						}
 					}

@@ -6,8 +6,8 @@ using UnityEngine;
 // Classe permettant de gérer l'hésitation de l'utilisateur concernant les données oculomètriques
 public class OculometreManager : MonoBehaviour
 {
-    public List<Vector2> occulaireHesite; // PB Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "hésite" (de PB)
-    public List<Vector2> occulaireSur; // PB Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "sûr" (de PB)
+    public List<Vector2> occulaireHesite; // Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "hésite"
+    public List<Vector2> occulaireSur; // Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "sûr" 
     // PB ou alors donnees occulaire seulement les deux extremes puis entre les deux c'est des probas d'hésitation ?
     public Tobii.Gaming.Examples.GazePointData.PrintGazePosition printGazePosition; // Permettant de gérer l'hésitation de l'utilisateur grâce aux données occulomètriques
     private const float beta = 0.5f; // Paramètre entre 0 et 1, Beta à 1 : on ne prends en compte que la classification des données oculomètriques et pas dutout l'écart de distance

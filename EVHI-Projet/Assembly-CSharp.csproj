@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\QuizManager.cs" />
      <Compile Include="Assets\Scripts\UserSelectionMenu.cs" />
      <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\ShowNoGazeDetection.cs" />
+     <Compile Include="Assets\Scripts\SignaleRegardOcu.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\MenuUtilisateur.cs" />
      <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\GazePlotter.cs" />
@@ -57,7 +58,8 @@
      <Compile Include="Assets\Scripts\OculometreManager.cs" />
      <Compile Include="Assets\Scripts\CsvReader.cs" />
      <Compile Include="Assets\Samples\Tobii Unity SDK for Desktop\4.1.0\Gaze Point Data\Scripts\CloudPointVisualizer.cs" />
-     <Compile Include="Assets\Scripts\SignaleRegardOcu.cs" />
+     <Compile Include="Assets\Scripts\Explication.cs" />
+     <Compile Include="Assets\Scripts\FauxAmi.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.24f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

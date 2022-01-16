@@ -16,10 +16,10 @@ namespace Tobii.Gaming.Examples.GazePointData
 	public class SignaleRegardOcu : MonoBehaviour
 	{
         public Canvas canvas; // Le canvas affichant le jeu
-		private Camera camera;
+		private Camera mainCamera;
 
         void Start(){
-            camera = Camera.main;
+            mainCamera = Camera.main;
         }
         void Update()
 		{
@@ -39,8 +39,8 @@ namespace Tobii.Gaming.Examples.GazePointData
 				Vector3 origin = new Vector3();
 				Vector3 extents = new Vector3();
                 Vector3 test = new Vector3(boundCanvas.min.x, boundCanvas.min.y, 0.0f);
-				origin = camera.WorldToScreenPoint(test);
-				extents = camera.WorldToScreenPoint(new Vector3(boundCanvas.max.x, boundCanvas.max.y, 0.0f));
+				origin = mainCamera.WorldToScreenPoint(test);
+				extents = mainCamera.WorldToScreenPoint(new Vector3(boundCanvas.max.x, boundCanvas.max.y, 0.0f));
 				//Debug.Log(origin + " " + extents);
 
 				// Redefinition de la hitbox adapté à la taille de l'ecran global
@@ -56,7 +56,7 @@ namespace Tobii.Gaming.Examples.GazePointData
                     // Si le point est dans l'écran, on indique à tous les chronomètres qu'il faut se (re)mettre en marche
                     PlayerPrefs.SetInt("ChronosEnPause", 0);
                 }else
-                {   // PB tjr valide, il faut vérifier que le point regardé est dans l'écran
+                {   
                     // Si le point n'est pas dans l'écran, cela signifie que l'utilisateur ne regarde plus l'écran
                     // Dans ce cas, on indique à tous les chronomètres qu'il faut se mettre en pause le temps que l'utilisateur se re-concentre
                     PlayerPrefs.SetInt("ChronosEnPause", 1);

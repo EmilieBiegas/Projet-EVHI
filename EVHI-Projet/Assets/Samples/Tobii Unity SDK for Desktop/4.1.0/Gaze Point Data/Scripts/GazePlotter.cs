@@ -67,20 +67,20 @@ namespace Tobii.Gaming.Examples.GazePointData
 		{
 			GazePoint gazePoint = TobiiAPI.GetGazePoint();
 
-			if (gazePoint.IsRecent()
-			    && gazePoint.Timestamp > (_lastGazePoint.Timestamp + float.Epsilon))
-			{
-				if (UseFilter)
-				{
-					UpdateGazeBubblePosition(gazePoint);
-				}
-				else
-				{
-					UpdateGazePointCloud(gazePoint);
-				}
+			// if (gazePoint.IsRecent()
+			//     && gazePoint.Timestamp > (_lastGazePoint.Timestamp + float.Epsilon))
+			// {
+			// 	if (UseFilter)
+			// 	{
+			// 		UpdateGazeBubblePosition(gazePoint);
+			// 	}
+			// 	else
+			// 	{
+			// 		UpdateGazePointCloud(gazePoint);
+			// 	}
 
-				_lastGazePoint = gazePoint;
-			}
+			// 	_lastGazePoint = gazePoint;
+			// }
 
 			UpdateGazePointCloudVisibility();
 			UpdateGazeBubbleVisibility();

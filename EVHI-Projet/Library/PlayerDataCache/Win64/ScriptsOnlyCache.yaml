@@ -12,6 +12,7 @@ ScriptsOnlyBuild:
     - Tobii.Gaming.Examples.GazePointData.GazePlotter
     - Tobii.Gaming.Examples.GazePointData.PrintGazePosition
     - Tobii.Gaming.Examples.GazePointData.ShowNoGazeDetection
+    - Tobii.Gaming.Examples.GazePointData.SignaleRegardOcu
     - Tobii.Gaming.Examples.GazePointData.ToggleCodeExample
     - VocabUtilisateur
     TobiiSDK.dll:
@@ -20,7 +21,6 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.IK.Editor.dll:
     - UnityEditor.U2D.IK.IKEditorManager
-    - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridPaintingState
     - UnityEditor.Tilemaps.GridPaletteBrushes
@@ -65,30 +65,44 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
+    - Class: 61
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1550}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1636}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 1676}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 1790}
     - Class: 114
-      Script: {instanceID: 2860}
+      Script: {instanceID: 1938}
     - Class: 114
-      Script: {instanceID: 3096}
+      Script: {instanceID: 2294}
     - Class: 114
-      Script: {instanceID: 3346}
+      Script: {instanceID: 2730}
     - Class: 114
-      Script: {instanceID: 3466}
+      Script: {instanceID: 2910}
     - Class: 114
-      Script: {instanceID: 3800}
+      Script: {instanceID: 3158}
     - Class: 114
-      Script: {instanceID: 18290}
+      Script: {instanceID: 3414}
+    - Class: 114
+      Script: {instanceID: 3472}
+    - Class: 114
+      Script: {instanceID: 3536}
+    - Class: 114
+      Script: {instanceID: 3854}
+    - Class: 114
+      Script: {instanceID: 3878}
+    - Class: 114
+      Script: {instanceID: 3880}
+    - Class: 114
+      Script: {instanceID: 4456}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -96,6 +110,8 @@ ScriptsOnlyBuild:
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 212
       Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
@@ -123,33 +139,33 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1550}
     - Class: 114
-      Script: {instanceID: 1646}
+      Script: {instanceID: 1676}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1790}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 2294}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 2730}
     - Class: 114
-      Script: {instanceID: 2860}
+      Script: {instanceID: 2910}
     - Class: 114
-      Script: {instanceID: 3096}
+      Script: {instanceID: 3158}
     - Class: 114
-      Script: {instanceID: 3346}
+      Script: {instanceID: 3414}
     - Class: 114
-      Script: {instanceID: 3358}
+      Script: {instanceID: 3426}
     - Class: 114
-      Script: {instanceID: 3466}
+      Script: {instanceID: 3536}
     - Class: 114
-      Script: {instanceID: 3800}
+      Script: {instanceID: 3880}
     - Class: 114
-      Script: {instanceID: 4306}
+      Script: {instanceID: 4396}
     - Class: 114
-      Script: {instanceID: 4528}
+      Script: {instanceID: 4626}
     - Class: 114
-      Script: {instanceID: 4736}
+      Script: {instanceID: 4842}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -179,34 +195,48 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
+    - Class: 61
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1550}
     - Class: 114
-      Script: {instanceID: 1526}
+      Script: {instanceID: 1554}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1676}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 1790}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 1938}
     - Class: 114
-      Script: {instanceID: 2860}
+      Script: {instanceID: 2294}
     - Class: 114
-      Script: {instanceID: 3096}
+      Script: {instanceID: 2730}
     - Class: 114
-      Script: {instanceID: 3156}
+      Script: {instanceID: 2910}
     - Class: 114
-      Script: {instanceID: 3346}
+      Script: {instanceID: 3158}
     - Class: 114
-      Script: {instanceID: 3466}
+      Script: {instanceID: 3220}
     - Class: 114
-      Script: {instanceID: 3800}
+      Script: {instanceID: 3414}
     - Class: 114
-      Script: {instanceID: 4068}
+      Script: {instanceID: 3472}
+    - Class: 114
+      Script: {instanceID: 3536}
+    - Class: 114
+      Script: {instanceID: 3854}
+    - Class: 114
+      Script: {instanceID: 3878}
+    - Class: 114
+      Script: {instanceID: 3880}
+    - Class: 114
+      Script: {instanceID: 4158}
+    - Class: 114
+      Script: {instanceID: 4456}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -214,6 +244,8 @@ ScriptsOnlyBuild:
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 212
       Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
@@ -245,51 +277,51 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1522}
+      Script: {instanceID: 1550}
     - Class: 114
-      Script: {instanceID: 1526}
+      Script: {instanceID: 1554}
     - Class: 114
-      Script: {instanceID: 1646}
+      Script: {instanceID: 1676}
     - Class: 114
-      Script: {instanceID: 1758}
+      Script: {instanceID: 1790}
     - Class: 114
-      Script: {instanceID: 2252}
+      Script: {instanceID: 1938}
     - Class: 114
-      Script: {instanceID: 2516}
+      Script: {instanceID: 2294}
     - Class: 114
-      Script: {instanceID: 2684}
+      Script: {instanceID: 2560}
     - Class: 114
-      Script: {instanceID: 2860}
+      Script: {instanceID: 2730}
     - Class: 114
-      Script: {instanceID: 3096}
+      Script: {instanceID: 2910}
     - Class: 114
-      Script: {instanceID: 3122}
+      Script: {instanceID: 3158}
     - Class: 114
-      Script: {instanceID: 3156}
+      Script: {instanceID: 3168}
     - Class: 114
-      Script: {instanceID: 3346}
+      Script: {instanceID: 3186}
     - Class: 114
-      Script: {instanceID: 3466}
+      Script: {instanceID: 3220}
     - Class: 114
-      Script: {instanceID: 3778}
+      Script: {instanceID: 3414}
     - Class: 114
-      Script: {instanceID: 3800}
+      Script: {instanceID: 3472}
     - Class: 114
-      Script: {instanceID: 4564}
+      Script: {instanceID: 3536}
     - Class: 114
-      Script: {instanceID: 4862}
+      Script: {instanceID: 3854}
     - Class: 114
-      Script: {instanceID: 5286}
+      Script: {instanceID: 3880}
     - Class: 114
-      Script: {instanceID: 5336}
+      Script: {instanceID: 4456}
     - Class: 114
-      Script: {instanceID: 18478}
+      Script: {instanceID: 4662}
     - Class: 114
-      Script: {instanceID: 18480}
+      Script: {instanceID: 4972}
     - Class: 114
-      Script: {instanceID: 18482}
+      Script: {instanceID: 5408}
     - Class: 114
-      Script: {instanceID: 18484}
+      Script: {instanceID: 5460}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -339,6 +371,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.2D.Animation.Runtime.dll
     namespaceName: UnityEngine.U2D.Animation
     className: SpriteSkin
+  - hash:
+      serializedVersion: 2
+      Hash: 1c737cf7da4ab09786904c339d94a91d
+    assemblyName: TobiiSDK.dll
+    namespaceName: Tobii.Gaming.Internal
+    className: TobiiEulaFile
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -395,6 +433,12 @@ ScriptsOnlyBuild:
     className: TMP_FontAsset
   - hash:
       serializedVersion: 2
+      Hash: c33e707ef67e680ba9fb8c616c74d41f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: ToggleCodeExample
+  - hash:
+      serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -449,6 +493,12 @@ ScriptsOnlyBuild:
     className: CanvasScaler
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: TobiiSDK.dll
+    namespaceName: Tobii.Gaming.Internal
+    className: TobiiHost
+  - hash:
+      serializedVersion: 2
       Hash: cf9f5cf2c3145a37ac07f00e50e460f9
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
@@ -485,6 +535,12 @@ ScriptsOnlyBuild:
     className: TextMeshProUGUI
   - hash:
       serializedVersion: 2
+      Hash: d16121996b176ba85620177a2e9598ff
+    assemblyName: TobiiSDK.dll
+    namespaceName: Tobii.Gaming
+    className: TobiiInitializer
+  - hash:
+      serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestRunner.Utils
@@ -495,6 +551,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: GraphicRaycaster
+  - hash:
+      serializedVersion: 2
+      Hash: 4192c35a15d82bea40bc8ae53c7cc8dd
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: PrintGazePosition
   - hash:
       serializedVersion: 2
       Hash: 174f4c70217e1bc7c9212d55381a5c5e
@@ -557,6 +619,12 @@ ScriptsOnlyBuild:
     className: MarkerTrack
   - hash:
       serializedVersion: 2
+      Hash: eeb42d0b6f65140dc8001b23764973d1
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: ShowNoGazeDetection
+  - hash:
+      serializedVersion: 2
       Hash: 8e6ceabfd38a184413d69b7db56c89cc
     assemblyName: UnityEngine.TestRunner.dll
     namespaceName: UnityEngine.TestTools
@@ -597,6 +665,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: Outline
+  - hash:
+      serializedVersion: 2
+      Hash: e9539b36af987b1fc4d5169f5d2f3d29
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: SignaleRegardOcu
   - hash:
       serializedVersion: 2
       Hash: 075f6517cd718c8cb3f8780d0b1ad1c9
@@ -647,7 +721,7 @@ ScriptsOnlyBuild:
     className: PlayModeRunnerCallback
   - hash:
       serializedVersion: 2
-      Hash: c49ea44776894d0ca6f1683af9f7bb7c
+      Hash: 2ae76c1cd661a7fa3b59ce98d15d203d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MenuUtilisateur
@@ -701,6 +775,12 @@ ScriptsOnlyBuild:
     className: ActivationTrack
   - hash:
       serializedVersion: 2
+      Hash: 53dc42278bbf6864e3f1d59b7fe09dff
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: GazePlotter
+  - hash:
+      serializedVersion: 2
       Hash: 0edeba255bdbade25edc357f1412ba38
     assemblyName: Unity.2D.SpriteShape.Runtime.dll
     namespaceName: UnityEngine.U2D
@@ -729,6 +809,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.2D.SpriteShape.Runtime.dll
     namespaceName: 
     className: SpriteShapeGeometryCache
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: SetBackground
   - hash:
       serializedVersion: 2
       Hash: b424b4eeb810aecb0ff91c62639241e9
@@ -821,7 +907,7 @@ ScriptsOnlyBuild:
     className: TMP_SpriteAsset
   - hash:
       serializedVersion: 2
-      Hash: c666937204489dd1ebea1b1b7bf9188c
+      Hash: e55257dd2335296e1a1c05b40597fa0a
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: OculometreManager
@@ -837,6 +923,18 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CsvReader
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: TobiiSDK.dll
+    namespaceName: Tobii.Gaming
+    className: GazeAware
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: Tobii.Gaming.Examples.GazePointData
+    className: CloudPointVisualizer
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -873,66 +971,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.2D.IK.Runtime.dll
     namespaceName: UnityEngine.U2D.IK
     className: FabrikSolver2D
-  - hash:
-      serializedVersion: 2
-      Hash: 1c737cf7da4ab09786904c339d94a91d
-    assemblyName: TobiiSDK.dll
-    namespaceName: Tobii.Gaming.Internal
-    className: TobiiEulaFile
-  - hash:
-      serializedVersion: 2
-      Hash: d16121996b176ba85620177a2e9598ff
-    assemblyName: TobiiSDK.dll
-    namespaceName: Tobii.Gaming
-    className: TobiiInitializer
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: TobiiSDK.dll
-    namespaceName: Tobii.Gaming
-    className: GazeAware
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: TobiiSDK.dll
-    namespaceName: Tobii.Gaming.Internal
-    className: TobiiHost
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: Tobii.Gaming.Examples.GazePointData
-    className: CloudPointVisualizer
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: Tobii.Gaming.Examples.GazePointData
-    className: SetBackground
-  - hash:
-      serializedVersion: 2
-      Hash: 9945f327fa1a1f8ab525316a6f9563f5
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: Tobii.Gaming.Examples.GazePointData
-    className: PrintGazePosition
-  - hash:
-      serializedVersion: 2
-      Hash: c33e707ef67e680ba9fb8c616c74d41f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: Tobii.Gaming.Examples.GazePointData
-    className: ToggleCodeExample
-  - hash:
-      serializedVersion: 2
-      Hash: eeb42d0b6f65140dc8001b23764973d1
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: Tobii.Gaming.Examples.GazePointData
-    className: ShowNoGazeDetection
-  - hash:
-      serializedVersion: 2
-      Hash: 53dc42278bbf6864e3f1d59b7fe09dff
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: Tobii.Gaming.Examples.GazePointData
-    className: GazePlotter
   platform: 19
   scenePathNames:
   - Assets/Scenes/MainMenu.unity

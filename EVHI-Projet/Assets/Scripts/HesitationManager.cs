@@ -6,19 +6,18 @@ using System;
 // Classe permettant de gérer l'hésitation de l'utilisateur (au niveau de sa vitesse de sélection, d'entrée de texte)
 public class HesitationManager : MonoBehaviour
 {
-    // PB préciser la véracité de la réponse associée // PB sauvegarder cette liste de vitesse
     public List<Tuple<float, bool>>[] vitessesSelection; // Tableau de liste : chaque case du tableau correspond à un mot de vocabulaire, pour chaque mot on a une liste de tuple dont le premier élément est le temps mis et le second est la véracité de la réponse (à chaque fois qu'on a rencontré ce mot)
     public List<Tuple<float, bool>>[] vitessesEntreeTexte; // Tableau de liste : chaque case du tableau correspond à un mot de vocabulaire, pour chaque mot on a une liste de tuple dont le premier élément est le temps mis pour entrer un caractère et le second est la véracité de la réponse (à chaque fois qu'on a rencontré ce mot)  
     public int nivSelection; // Défini le niveau en terme de vitesse de sélection de l'utilisateur
     public int nivEntreeTexte; // Défini le niveau en terme de vitesse d'entrée de texte de l'utilisateur
     // Paramètre alpha permettant de prendre plus ou moins en compte l'estimation d'hésitation par l'oculomètre et par la vitesse de sélection
-    private const float alpha = 1; // PB Alpha à 1 : on ne prends en compte que l'hésitation déterminée par l'oculomètre et pas par la vitesse de sélection
+    private const float alpha = 0.5f; // PB Paramètre entre 0 et 1 déterminant l'importance de l'hésitation déterminée par l'oclomètre et par la vitesse de selection. Alpha à 1 : on ne prends en compte que l'hésitation déterminée par l'oculomètre et pas par la vitesse de sélection
     public OculometreManager oculometreManager;
     
 
-    // PB les temps sont en seconde
+    // Tous les temps sont exprimés en seconde
     public static readonly string[] TousNiv = {"Best", "Good", "Avg+", "Avg-", "Bad+", "Bad-", "Worst"};
-    // D'après le Keystroke-Level Model (KLM), on a les teps suivants :
+    // D'après le Keystroke-Level Model (KLM), on a les temps suivants :
     public static readonly float[] TmpsEntreeTexte = {0.08f, 0.12f, 0.20f, 0.28f, 0.5f, 0.75f, 1.2f}; // Le temps d'entrée de texte (d'un caractère) en fonction du niveau de l'utilisateur
     public static readonly float[] TmpsPointage = {0.8f, 1f, 1.1f, 1.3f, 1.4f, 1.5f, 1.6f}; // Le temps de pointage à la souris de 0.8 à 1.6 secondes en fonction du niveau de l'utilisateur
     const float TmpsHftK = 0.4f; // Le temps pour passer du clavier à un autre dispositif (souris) ou au statut inactif (pas sur le clavier ni sur le dispositif) et inversement
@@ -30,9 +29,7 @@ public class HesitationManager : MonoBehaviour
     private float TmpsAutourEntreeTexte = TmpsLectureEntier + TmpsMental + TmpsHftK;// Ce qui doit être ajouté au temps d'entrée de texte pour estimer le temps de réponse entière : 
     // pour répondre à une question à réponse entière, on a TmpsLectureEntier + TmpsMental + (TmpsPointage[i] + 2*TmpsClicButton) + TmpsHftK + nbCarEntres*TmpsEntreeTexte (sans oublier la touche entrée) + (TmpsHftK + TmpsPointage + 2*TmpsClicButton) 
     // Première parenthèse : si on considère que l'utilisateur appuie sur la barre de saisie
-    // Deuxième parenthèse : si on considère que l'utilisateur appuie sur la touche OK pour valider
-
-    // PB Fits Law Pour pointage ??  
+    // Deuxième parenthèse : si on considère que l'utilisateur appuie sur la touche OK pour valider 
 
     public void ListesDefaut() // Initialisation des listes de vitesses de sélection et d'entrée de texte (à n'appeler que pour un nouvel utilisateur)
     {
@@ -87,8 +84,7 @@ public class HesitationManager : MonoBehaviour
             UnityEngine.Debug.Log("HESITATION DE SELECTION ESTIMEE = 0");
             return 0; // Si il met moins de temps que ce qui est prévu, il ne présente aucune hésitation
         }
-        // PB peut etre le mettre avant MajNiv?
-        float hesitation = ((temps - tempsPredit)/temps); // PB entre 0 et 1 OK
+        float hesitation = ((temps - tempsPredit)/temps); // Entre 0 et 1 OK
         // ((temps - tempsPredit)/temps) = 1-tempsPredit/temps or, tempsPredit<temps d'où tempsPredit/temps<1 et >0 comme les deux temps sont positifs
 
         
@@ -128,8 +124,7 @@ public class HesitationManager : MonoBehaviour
             UnityEngine.Debug.Log("HESITATION D ENTREE DE TEXTE ESTIMEE = 0");
             return 0; // Si il met moins de temps que ce qui est prévu, il ne présente aucune hésitation
         }
-        // PB peut etre le mettre avant MajNiv?
-        float hesitation = ((temps - tempsPredit)/temps); // PB entre 0 et 1 OK
+        float hesitation = ((temps - tempsPredit)/temps); // Entre 0 et 1 OK
         // ((temps - tempsPredit)/temps) = 1-tempsPredit/temps or, tempsPredit<temps d'où tempsPredit/temps<1 et >0 comme les deux temps sont positifs
 
         UnityEngine.Debug.Log("HESITATION D ENTREE DE TEXTE ESTIMEE = " + hesitation); 
@@ -259,6 +254,7 @@ public class HesitationManager : MonoBehaviour
     }
 
     public void AjoutVitesseEntreeTexte(int QuestionCourrante, float floatTimeSpan, int nbCar, bool bonneRepEntree){
+        // Fonction permettant d'ajouter une vitesse d'entrée de texte à la base de trace
         float tmpsParCaractere = Math.Max(floatTimeSpan - TmpsAutourEntreeTexte, 0) / nbCar;
         // UnityEngine.Debug.Log("QuestionCourrante : "+QuestionCourrante+", floatTimeSpan : "+floatTimeSpan);
         // UnityEngine.Debug.Log("nbCar : "+nbCar+", bonneRepEntree : "+bonneRepEntree);

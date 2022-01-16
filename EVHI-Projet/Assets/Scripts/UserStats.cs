@@ -13,7 +13,7 @@ public class UserStats
     public int nivSelection; // Défini le niveau en terme de vitesse de sélection de l'utilisateur (de HesitationManager)
     public int nivEntreeTexte; // Défini le niveau en terme de vitesse d'entrée de texte de l'utilisateur (de HesitationManager)
     public float[][] probaAcquisNature; // PB Défini les connaissances de l'apprenant quant à la nature des mots (de PB)
-    public List<Vector2> occulaireHesite; // PB Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "hésite" (de PB)
-    public List<Vector2> occulaireSur; // PB Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "sûr" (de PB)
+    public List<Vector2> occulaireHesite; // Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "hésite" (de OculometreManager)
+    public List<Vector2> occulaireSur; // Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "sûr" (de OculometreManager)
     // PB ou alors donnees occulaire seulement les deux extremes puis entre les deux c'est des probas d'hésitation ?
 }

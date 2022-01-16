@@ -29,7 +29,7 @@ public class MenuUtilisateur : MonoBehaviour
         SetPseudos(); // On màj les pseudos
         SetScores(); // On affiche les bons scores lorsque l'on ouvre le menu utilisateurs
     }
-
+    
     public void GoMenuPseudo(int NumJ){ // Permet d'accéder au menu pseudos
         // On arrête le chronomètre de sélection
         timerSelection.Stop();
@@ -83,7 +83,7 @@ public class MenuUtilisateur : MonoBehaviour
         
         PlayerPrefs.SetFloat("TmpsEntreePseudoJ" + NumJoueur, floatTimeSpan); // On ajoute le temps de saisie du pseudo du joueur en cours de jeu pour pouvoir initialiser le temps d'entrée de texte
         
-        string foo = "Temps d'entrée de pseudo du joueur " + NumJoueur + " = " + timeTaken.ToString(@"m\:ss\.fff"); // PB attention, timeTaken est un string mtn
+        string foo = "Temps d'entrée de pseudo du joueur " + NumJoueur + " = " + timeTaken.ToString(@"m\:ss\.fff"); // Attention, timeTaken est un string mtn
         // UnityEngine.Debug.Log(foo);
 
         // On met à jour le pseudo du joueur en question
@@ -194,7 +194,6 @@ public class MenuUtilisateur : MonoBehaviour
         // UnityEngine.Debug.Log("Liste tempsSelectionMenu Concaténée (MenuUtilisateur) = " + tempsSelectionMenu + " de taille " + tempsSelectionMenu.Count);
 
         UserSelectionMenu saveDataSelectionMenu = new UserSelectionMenu();
-        // PB on doit enregistrer toutes les stats
         saveDataSelectionMenu.tempsSelectionMenu = new List<float>();
         saveDataSelectionMenu.tempsSelectionMenu = tempsSelectionMenu;
         // Sauvegarde des données de selection dans les menus dans un fichier nommé SelectionMenuJ suivi du numéro du joueur
