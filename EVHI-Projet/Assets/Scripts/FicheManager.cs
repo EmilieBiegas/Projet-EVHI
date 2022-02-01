@@ -19,14 +19,23 @@ public class FicheManager : MonoBehaviour
 	public static readonly List<string> SUFFIXE_VERBE_NOM=new List<string>(){"er","ee","al","ence","ee"};
 	public static readonly List<string> SUFFIXE_VERBE_ADJ=new List<string>(){"able","ing","ed","ive"};
 	public string typeConfusion;
+
+
 	public void updateContenuFicheAideQCM(){
-		ContenuFicheAideQCM.text="explication for "+ QR.ReponseCorrecte;
-		ContenuFicheAideQCM.text+="\n nature de mot : "+QR.explicationBonneReponse.nature;
-		ContenuFicheAideQCM.text+="\n definition : "+QR.explicationBonneReponse.definition;
-		ContenuFicheAideQCM.text+="\n exemple : "+QR.explicationBonneReponse.exemple;
+		ContenuFicheAideQCM.text="Explication pour "+ QR.ReponseCorrecte;
+		if(QR.explicationBonneReponse.nature.Length!=0){
+			ContenuFicheAideQCM.text+="\n nature de mot : "+QR.explicationBonneReponse.nature;
+		}
+		if(QR.explicationBonneReponse.definition.Length!=0){
+			ContenuFicheAideQCM.text+="\n définition : "+QR.explicationBonneReponse.definition;
+		}
+		if(QR.explicationBonneReponse.exemple.Length!=0){
+			ContenuFicheAideQCM.text+="\n exemple : "+QR.explicationBonneReponse.exemple;
+		}
 		//si utilisateur ne selectionne pas la bonne reponse
 		if(indReponseSelectionnee!=QR.IndReponseCorrecte){
-			ContenuFicheAideQCM.text+="\n vous avez confondu avec : "+QR.Reponses[indReponseSelectionnee];
+			ContenuFicheAideQCM.text+="\n ----------------------------- ";
+			ContenuFicheAideQCM.text+="\n Vous avez confondu avec : "+QR.Reponses[indReponseSelectionnee];
 			//si il y a des informations supplementaire sur les autres reponses
 			if(QR.explicationsSupplement!=null){
 				//cherche s'il y a des informations supplementaire sur la reponse que l'utilisateur a selectionné
@@ -34,9 +43,16 @@ public class FicheManager : MonoBehaviour
 					//afficher l'explication du mot l'utilisateur a selectionnée
 					//Debug.Log("explicationsSupplement"+QR.explicationsSupplement.Length);
 					if(QR.Reponses[indReponseSelectionnee]==QR.explicationsSupplement[i].mot){
-						ContenuFicheAideQCM.text+="\n nature de mot : "+QR.explicationsSupplement[i].nature;
-						ContenuFicheAideQCM.text+="\n definition : "+QR.explicationsSupplement[i].definition;
-						ContenuFicheAideQCM.text+="\n exemple : "+QR.explicationsSupplement[i].exemple;
+						if(QR.explicationsSupplement[i].nature.Length!=0){
+							//mettreAjourNbConfuNature(QR.explicationBonneReponse.nature,QR.explicationsSupplement[i].nature);
+							ContenuFicheAideQCM.text+="\n nature de mot : "+QR.explicationsSupplement[i].nature;
+						}
+						if(QR.explicationsSupplement[i].definition.Length!=0){
+							ContenuFicheAideQCM.text+="\n définition : "+QR.explicationsSupplement[i].definition;
+						}
+						if(QR.explicationsSupplement[i].exemple.Length!=0){
+							ContenuFicheAideQCM.text+="\n exemple : "+QR.explicationsSupplement[i].exemple;
+						}
 						break;
 					}
 				}
@@ -44,14 +60,23 @@ public class FicheManager : MonoBehaviour
 		}
 
 	}
+
 	public void updateContenuFicheAideQEnt(string ReponseUtilisateur){
-		ContenuFicheAideQEnt.text="explication for "+ QR.ReponseCorrecte;
-		ContenuFicheAideQEnt.text+="\n nature de mot "+QR.explicationBonneReponse.nature;
-		ContenuFicheAideQEnt.text+="\n definition : "+QR.explicationBonneReponse.definition;
-		ContenuFicheAideQEnt.text+="\n exemple : "+QR.explicationBonneReponse.exemple;
+		bool IsmajnbConfuNature=false;
+		ContenuFicheAideQEnt.text="Explication pour le mot "+ QR.ReponseCorrecte;
+		if(QR.explicationBonneReponse.nature.Length!=0){
+			ContenuFicheAideQEnt.text+="\n nature de mot : "+QR.explicationBonneReponse.nature;
+		}
+		if(QR.explicationBonneReponse.definition.Length!=0){
+			ContenuFicheAideQEnt.text+="\n définition : "+QR.explicationBonneReponse.definition;
+		}
+		if(QR.explicationBonneReponse.exemple.Length!=0){
+			ContenuFicheAideQEnt.text+="\n exemple : "+QR.explicationBonneReponse.exemple;
+		}
 		//si utilisateur n'ecrit pas la bonne reponse
 		if(ReponseUtilisateur!=QR.ReponseCorrecte){
-			ContenuFicheAideQEnt.text+="\n confondu avec "+ReponseUtilisateur;
+			ContenuFicheAideQEnt.text+="\n ----------------------------- ";
+			ContenuFicheAideQEnt.text+="\n Vous avez confondu avec : "+ReponseUtilisateur;
 			//chercher si l'utilisateur se trompe avec le mot qui a l'explication
 			if(QR.explicationsSupplement!=null){
 				//cherche s'il y a des informations supplementaire sur la reponse que l'utilisateur a donnée
@@ -59,9 +84,16 @@ public class FicheManager : MonoBehaviour
 					//afficher l'explication du mot l'utilisateur a taper
 					//Debug.Log("explicationsSupplement"+QR.explicationsSupplement.Length);
 					if(ReponseUtilisateur==QR.explicationsSupplement[i].mot){
-						ContenuFicheAideQEnt.text+="\n nature de mot : "+QR.explicationsSupplement[i].nature;
-						ContenuFicheAideQEnt.text+="\n definition : "+QR.explicationsSupplement[i].definition;
-						ContenuFicheAideQEnt.text+="\n exemple : "+QR.explicationsSupplement[i].exemple;
+						if(QR.explicationsSupplement[i].nature.Length!=0){
+							//IsmajnbConfuNature=mettreAjourNbConfuNature(QR.explicationBonneReponse.nature,QR.explicationsSupplement[i].nature);
+							ContenuFicheAideQEnt.text+="\n nature de mot : "+QR.explicationsSupplement[i].nature;
+						}
+						if(QR.explicationsSupplement[i].definition.Length!=0){
+							ContenuFicheAideQEnt.text+="\n définition : "+QR.explicationsSupplement[i].definition;
+						}
+						if(QR.explicationsSupplement[i].exemple.Length!=0){
+							ContenuFicheAideQEnt.text+="\n exemple : "+QR.explicationsSupplement[i].exemple;
+						}
 						break;
 					}
 				}
@@ -69,24 +101,29 @@ public class FicheManager : MonoBehaviour
 			//se tromper avec faux ami
 			if(QR.fauxAmi!=null){
 				if(ReponseUtilisateur==QR.fauxAmi.fauxami){
-					ContenuFicheAideQEnt.text+="\n confondu avec fauxami\n traduction: "+QR.fauxAmi.traduction;
+					ContenuFicheAideQEnt.text+="\n ----------------------------- ";
+					ContenuFicheAideQEnt.text+="\n Vous avez confondu avec fauxami : "+QR.fauxAmi.fauxami +"\n traduction: "+QR.fauxAmi.traduction;
 				}
 			}
-			//chercher si l'utilisateur se trompe sur la nature de mot
-			if(detecterConfusionNature(ReponseUtilisateur)){
-				ContenuFicheAideQEnt.text+="\n confondre la nature de mot ("+typeConfusion+")";
+			if(! IsmajnbConfuNature ){
+				//chercher si l'utilisateur se trompe sur la nature de mot
+				if(detecterConfusionNature(QR.ReponseCorrecte,ReponseUtilisateur)){
+					ContenuFicheAideQEnt.text+="\n       ----------------------------- ";
+					ContenuFicheAideQEnt.text+="\n Vous avez confondu la nature de mot ("+typeConfusion+")";
+				}
 			}
 		}
 
 
 
 	}
-	public bool detecterConfusionNature(string ReponseUtilisateur){
-		Debug.Log("detecterConfusionNature");
+	public bool detecterConfusionNature(string ReponseCorrecte,string ReponseUtilisateur){
 		char[] charactersRU=ReponseUtilisateur.ToCharArray();//characteres reponse utilisateur
-		char[] charactersRC=QR.ReponseCorrecte.ToCharArray();//characteres reponse correcte
-		Debug.Log("charactersRU "+charactersRU.Length+"  charactersRC "+charactersRC.Length);
-
+		char[] charactersRC=ReponseCorrecte.ToCharArray();//characteres reponse correcte
+		
+		if(ReponseUtilisateur==ReponseCorrecte){
+			return false;
+		}
 	 	if(charactersRU.Length<=charactersRC.Length){
 	 		//impossible d'avoir un suffixe
 	 		return false;
@@ -101,8 +138,9 @@ public class FicheManager : MonoBehaviour
 	 	// préfixe de reponseUtilisateur est motCorrecte
 	 	// trouver le suffixe,càd les caractères dans reponseUtilisateur apres motcorrecte
 	 	string suffixe=(new string(charactersRU)).Substring(charactersRC.Length);
-	 	if(QR.explicationBonneReponse.nature=="n."){
-	 		//Debug.Log("nature !!!!!!"+" suffixe "+suffixe);
+	 	//List<string>type_nature_check=new List<string>();//list pour verifer le type de nature
+	 	//verifier le type de nature est nom: n.,a. & n.
+	 	if(QR.explicationBonneReponse.nature.Contains("n.")){
 	 		if(SUFFIXE_NOM_NOM.Contains(suffixe)){
 	 			typeConfusion="NOM_NOM";
 	 			return true;
@@ -116,8 +154,7 @@ public class FicheManager : MonoBehaviour
 	 			return true;
 	 		}
 	 	}
-	 	if(QR.explicationBonneReponse.nature=="adj."){
-	 		//Debug.Log("nature !!!!!!"+" suffixe "+suffixe);
+	 	if(QR.explicationBonneReponse.nature.Contains("a.")){
 	 		if(SUFFIXE_ADJ_NOM.Contains(suffixe)){
 	 			typeConfusion="ADJ_NOM";
 	 			return true;
@@ -132,8 +169,7 @@ public class FicheManager : MonoBehaviour
 	 		}
 	 	}
 
-	 	if(QR.explicationBonneReponse.nature=="v."){
-	 		//Debug.Log("nature !!!!!!"+" suffixe "+suffixe);
+	 	if(QR.explicationBonneReponse.nature.Contains("v.")){
 	 		if(SUFFIXE_VERBE_ADJ.Contains(suffixe)){
 	 			typeConfusion="VERBE_ADJ";
 	 			return true;
@@ -147,15 +183,5 @@ public class FicheManager : MonoBehaviour
 
 	 	return false;
 	}
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

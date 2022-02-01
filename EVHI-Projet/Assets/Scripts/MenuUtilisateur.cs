@@ -24,6 +24,7 @@ public class MenuUtilisateur : MonoBehaviour
     private bool ChronoSelEnMarche; // Booléen qui indique si le chronomètre de sélection est en marche (true), ou en pause (false)
     private bool ChronoPseudoEnMarche; // Booléen qui indique si le chronomètre d'entrée de pseudo est en marche (true), ou en pause (false)
     private bool demarragePseudo; // Booléen qui indique si l'utilisateur est en train d'entrer son pseudo ou non
+    
     public void GoMenuUtilisateur(){ //Retourner dans le menu utilisateur (pas dans le menu pseudos), appuyer sur Retour cache le panneau pseudo
         PanneauPseudo.SetActive(false); // On cache le panneau pseudo
         SetPseudos(); // On màj les pseudos
@@ -206,6 +207,7 @@ public class MenuUtilisateur : MonoBehaviour
         DataSaver.deleteData("Initialisation_Joueur" + NumJoueur); // Efface les données d'initialisation du joueur
         DataSaver.deleteData("TracesSelectJ" + NumJoueur); // Efface les traces de sélection du joueur
         DataSaver.deleteData("TracesTextJ" + NumJoueur); // Efface les traces d'entrée de texte du joueur
+        DataSaver.deleteData("traceReponse_Joueur"+NumJoueur); // Efface les traces d'entrée de réponse du joueur
         DataSaver.deleteData("SelectionMenuJ" + NumJoueur); // Efface les données de selection dans les menus du joueur
         PlayerPrefs.DeleteKey("PseudoJ" + NumJoueur); // Efface son pseudo
         PlayerPrefs.DeleteKey("ScoreJ" + NumJoueur); // Efface son score

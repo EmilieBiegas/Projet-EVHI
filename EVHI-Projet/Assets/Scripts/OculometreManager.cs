@@ -8,7 +8,6 @@ public class OculometreManager : MonoBehaviour
 {
     public List<Vector2> occulaireHesite; // Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "hésite"
     public List<Vector2> occulaireSur; // Défini l'ensemble des données occulaires (vecteur à deux dimensions) de la classe "sûr" 
-    // PB ou alors donnees occulaire seulement les deux extremes puis entre les deux c'est des probas d'hésitation ?
     public Tobii.Gaming.Examples.GazePointData.PrintGazePosition printGazePosition; // Permettant de gérer l'hésitation de l'utilisateur grâce aux données occulomètriques
     private const float beta = 0.5f; // Paramètre entre 0 et 1, Beta à 1 : on ne prends en compte que la classification des données oculomètriques et pas dutout l'écart de distance
 
@@ -25,7 +24,7 @@ public class OculometreManager : MonoBehaviour
         Tuple<float, string> tupleRes = ClassifyKNN(pointOcu);
         float EstimationHestation = tupleRes.Item1;
         string classeEstimee = tupleRes.Item2;
-        UnityEngine.Debug.Log("Hesitation selon Oculomètre : " + EstimationHestation);
+        // UnityEngine.Debug.Log("Hesitation selon Oculomètre : " + EstimationHestation);
 
         // On ajoute le point obtenu à la base de donnée
         if (classeEstimee == "hesite")
@@ -42,7 +41,7 @@ public class OculometreManager : MonoBehaviour
         // Fonction permettant de classifier un point en entrée et d'estimer la probabilité d'hésitation de l'utilisateur
         // Attention, pour utiliser cette fonction, il faut que les listes de vecteurs occulaireSur et occulaireHesite soient non vides
        
-        // On compare la distance du point en entrée avec chacun des points des classes // PB comparer au point moyen ou au point le plus proche ?
+        // On compare la distance du point en entrée avec chacun des points des classes // On peut comparer au point moyen ou au point le plus proche
         float distMinSur = -1; // La distance minimale du point avec la classe sur
         for(int i = 0; i < occulaireSur.Count; i++)
         {

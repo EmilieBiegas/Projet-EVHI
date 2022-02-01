@@ -11,9 +11,8 @@ public class HesitationManager : MonoBehaviour
     public int nivSelection; // Défini le niveau en terme de vitesse de sélection de l'utilisateur
     public int nivEntreeTexte; // Défini le niveau en terme de vitesse d'entrée de texte de l'utilisateur
     // Paramètre alpha permettant de prendre plus ou moins en compte l'estimation d'hésitation par l'oculomètre et par la vitesse de sélection
-    private const float alpha = 0.5f; // PB Paramètre entre 0 et 1 déterminant l'importance de l'hésitation déterminée par l'oclomètre et par la vitesse de selection. Alpha à 1 : on ne prends en compte que l'hésitation déterminée par l'oculomètre et pas par la vitesse de sélection
+    private const float alpha = 0.5f; // Paramètre entre 0 et 1 déterminant l'importance de l'hésitation déterminée par l'oclomètre et par la vitesse de selection. Alpha à 1 : on ne prends en compte que l'hésitation déterminée par l'oculomètre et pas par la vitesse de sélection
     public OculometreManager oculometreManager;
-    
 
     // Tous les temps sont exprimés en seconde
     public static readonly string[] TousNiv = {"Best", "Good", "Avg+", "Avg-", "Bad+", "Bad-", "Worst"};
@@ -23,8 +22,8 @@ public class HesitationManager : MonoBehaviour
     const float TmpsHftK = 0.4f; // Le temps pour passer du clavier à un autre dispositif (souris) ou au statut inactif (pas sur le clavier ni sur le dispositif) et inversement
     const float TmpsMental = 1.35f; // Le temps de préparation mentale allant de 1.35 à 1.62 (temps nécessaire à l'utilisateur pour réflechir à sa décision)
     const float TmpsClicButton = 0.1f; // Le temps pour cliquer ou relaché un bouton (sur la souris)
-    const float TmpsLectureQCM = 0f; // Le temps de lecture de la question QCM est estimé à PB secondes
-    const float TmpsLectureEntier = 0f; // Le temps de lecture de la question à réponse entière est estimé à PB secondes
+    const float TmpsLectureQCM = 0f; // Le temps de lecture de la question QCM est estimé à 0 secondes
+    const float TmpsLectureEntier = 0f; // Le temps de lecture de la question à réponse entière est estimé à 0 secondes
     private float TmpsAutourSelection = TmpsLectureQCM + TmpsMental + 2*TmpsClicButton; // Ce qui doit être ajouté au temps de pointage pour estimer le temps de réponse du QCM : pour répondre à un QCM on a TmpsLectureQCM + TmpsMental + TmpsPointage + 2*TmpsClicButton
     private float TmpsAutourEntreeTexte = TmpsLectureEntier + TmpsMental + TmpsHftK;// Ce qui doit être ajouté au temps d'entrée de texte pour estimer le temps de réponse entière : 
     // pour répondre à une question à réponse entière, on a TmpsLectureEntier + TmpsMental + (TmpsPointage[i] + 2*TmpsClicButton) + TmpsHftK + nbCarEntres*TmpsEntreeTexte (sans oublier la touche entrée) + (TmpsHftK + TmpsPointage + 2*TmpsClicButton) 
@@ -76,7 +75,7 @@ public class HesitationManager : MonoBehaviour
     public float EstimationHesitationSelection(float temps){ // Fonction estimant et retournant la probabilité d'hésitation de l'utilisateur en fonction de la vitesse de sélection
 
         MajNivSelection(temps); // On met à jour le niveau de l'utilisateur en fonction du temps qu'il a mis à répondre
-        UnityEngine.Debug.Log("Niveau de sélection de l'utilisateur = " + nivSelection);
+        // UnityEngine.Debug.Log("Niveau de sélection de l'utilisateur = " + nivSelection);
         float tempsPredit = TmpsAutourSelection + TmpsPointage[nivSelection];
 
         if (temps<tempsPredit)
@@ -87,7 +86,6 @@ public class HesitationManager : MonoBehaviour
         float hesitation = ((temps - tempsPredit)/temps); // Entre 0 et 1 OK
         // ((temps - tempsPredit)/temps) = 1-tempsPredit/temps or, tempsPredit<temps d'où tempsPredit/temps<1 et >0 comme les deux temps sont positifs
 
-        
         UnityEngine.Debug.Log("HESITATION DE SELECTION ESTIMEE = " + hesitation); 
 
         return hesitation;
@@ -116,7 +114,7 @@ public class HesitationManager : MonoBehaviour
         // Nous n'avons que la vitesse d'entrée de texte à prendre en compte
         MajNivEntreeeTexte(temps, NbCar); // On met à jour le niveau de l'utilisateur en fonction du temps qu'il a mis à répondre
         
-        UnityEngine.Debug.Log("Niveau d'entrée de texte de l'utilisateur = " + nivEntreeTexte);
+        // UnityEngine.Debug.Log("Niveau d'entrée de texte de l'utilisateur = " + nivEntreeTexte);
         float tempsPredit = TmpsAutourEntreeTexte + NbCar*TmpsEntreeTexte[nivEntreeTexte];
 
         if (temps<tempsPredit)
@@ -175,7 +173,7 @@ public class HesitationManager : MonoBehaviour
         {
             nivSelection = TousNiv.Length-1; // On commence par mettre le pire niveau à l'utilisateur (cela va se mettre à jour juste après)
         }
-        // PB temps mental a enlever ?
+
         while (nivSelection > 0 && temps < TmpsMental + TmpsPointage[nivSelection] + 2*TmpsClicButton) // S'il sélectionne plus vite que son temps prédit et que son niveau n'est pas le meilleur, c'est peut-être qu'il a un meilleur niveau
         {
             // Si son niveau n'est pas le meilleur, on augmente de 1 le rang de son niveau
@@ -193,7 +191,7 @@ public class HesitationManager : MonoBehaviour
         {
             nivEntreeTexte = TousNiv.Length-1; // On commence par mettre le pire niveau à l'utilisateur (cela va se mettre à jour juste après)
         }
-        // PB temps mental a enlever ?
+
         while (nivEntreeTexte > 0 && temps < TmpsMental + nbCarEntres*TmpsEntreeTexte[nivEntreeTexte]) // S'il écrit plus vite que son temps prédit et que son niveau n'est pas le meilleur, c'est peut-être qu'il a un meilleur niveau
         {
             // Si son niveau n'est pas le meilleur, on augmente de 1 le rang de son niveau
@@ -206,6 +204,11 @@ public class HesitationManager : MonoBehaviour
     public void MajNivSelectionTraces(){ // Fonction permettant de mettre à jour le niveau de l'utilisateur en ce qui concerne la vitesse de sélection grâce à l'ensemble des traces récoltées
         // On met à jour le niveau de sélection de l'utilisateur régulièrement afin de s'assurer que son niveau est représentatif
         // On compare alors la moyenne des temps tracés avec le temps prédit selon son niveau
+        
+        if (nivSelection == -1) // Si on n'a pas encore initialisé le niveau de l'utilisateur
+        {
+            nivSelection = TousNiv.Length-1; // On commence par mettre le pire niveau à l'utilisateur (cela va se mettre à jour juste après)
+        }
         
         // Calcul de la moyenne des temps tracés
         float moyenne = 0;
@@ -232,6 +235,11 @@ public class HesitationManager : MonoBehaviour
         // On met à jour le niveau d'entrée de texte de l'utilisateur régulièrement afin de s'assurer que son niveau est représentatif
         // On compare alors la moyenne des temps tracés avec le temps prédit selon son niveau
         
+        if (nivEntreeTexte == -1) // Si on n'a pas encore initialisé le niveau de l'utilisateur
+        {
+            nivEntreeTexte = TousNiv.Length-1; // On commence par mettre le pire niveau à l'utilisateur (cela va se mettre à jour juste après)
+        }
+
         // Calcul de la moyenne des temps tracés
         float moyenne = 0;
         int nbDonnees = 0;
@@ -245,7 +253,6 @@ public class HesitationManager : MonoBehaviour
             }
         }
         moyenne = moyenne/nbDonnees;
-        
         while (nivEntreeTexte < 6 && moyenne > TmpsEntreeTexte[nivEntreeTexte]) // S'il écrit moins vite que son temps prédit et que son niveau n'est pas le moins bon, c'est peut-être qu'il a un moins bon niveau
         {
             // Si son niveau n'est pas le moins bon, on descend de 1 le rang de son niveau
@@ -258,7 +265,7 @@ public class HesitationManager : MonoBehaviour
         float tmpsParCaractere = Math.Max(floatTimeSpan - TmpsAutourEntreeTexte, 0) / nbCar;
         // UnityEngine.Debug.Log("QuestionCourrante : "+QuestionCourrante+", floatTimeSpan : "+floatTimeSpan);
         // UnityEngine.Debug.Log("nbCar : "+nbCar+", bonneRepEntree : "+bonneRepEntree);
-        UnityEngine.Debug.Log("vitessesEntreeTexte[QuestionCourrante] :"+vitessesEntreeTexte[QuestionCourrante]);
+        // UnityEngine.Debug.Log("vitessesEntreeTexte[QuestionCourrante] :"+vitessesEntreeTexte[QuestionCourrante]);
         vitessesEntreeTexte[QuestionCourrante].Add(new Tuple<float, bool>(tmpsParCaractere, bonneRepEntree));
     }
 
@@ -278,6 +285,10 @@ public class HesitationManager : MonoBehaviour
             {
                 reponsesOk.Add(vitessesEntreeTexte[QuestionCourrante][i].Item2);
             }
+        }
+
+        if (reponsesOk.Count == 1){ // Si on n'a répondu qu'une seule fois à la question, on retourne la véracité de la réponse donnée
+            return reponsesOk[0]; // Vrai si bien répondu et faux sinon
         }
 
         int nbPair = 0; // Vaut 0 si il y a un nombre pair de réponses et 1 sinon (pour comparer le même nombre de réponse des deux côtés)
@@ -318,7 +329,7 @@ public class HesitationManager : MonoBehaviour
         {
             if (vitessesEntreeTexte[i].Count > 0)
             {
-                UnityEngine.Debug.Log("vitessesEntreeTexte non vide pour le mot "+i);
+                // UnityEngine.Debug.Log("vitessesEntreeTexte non vide pour le mot "+i);
                 int goodRepFin = 0; 
                 if(vitessesEntreeTexte[i][vitessesEntreeTexte[i].Count-1].Item2 == true){
                     goodRepFin = 1; 
@@ -332,7 +343,7 @@ public class HesitationManager : MonoBehaviour
             {
                if (vitessesSelection[i].Count > 0)
                 {
-                    UnityEngine.Debug.Log("vitessesSelection non vide pour le mot "+i);
+                    // UnityEngine.Debug.Log("vitessesSelection non vide pour le mot "+i);
                     int goodRepFin = 0; 
                     if(vitessesSelection[i][vitessesSelection[i].Count-1].Item2 == true){
                         goodRepFin = 1; 
@@ -345,7 +356,7 @@ public class HesitationManager : MonoBehaviour
                 } 
             }
         }
-        UnityEngine.Debug.Log("Score : "+score);
+        // UnityEngine.Debug.Log("Score : "+score);
         return score;
     }
 }

@@ -12,14 +12,12 @@ public class ReponseScript : MonoBehaviour
 
     public void ReponseQCM(){ // Appellée lorsque l'utilisateur répond à un QCM
         quizManager.ficheManager.indReponseSelectionnee = indReponseCorrespond; // Pour update l'indice de réponse selectionné par utilisateur
-        if(isCorrect){
-            Debug.Log("Reponse correcte");
+        if(isCorrect){ // Réponse correcte
             quizManager.ReponduQCM(true); // On traite la réponse de l'utilisateur dans le quizManager (affichage des couleurs etc.)
             quizManager.DecrementeNbQuestAvantNouvelle(); // On augmente l'approfondissement des connaissances
             quizManager.RepEntreeOK = true; // Indiquer dans quizManager que l'utilisateur a bien répondu
         }else
-        {
-            Debug.Log("Reponse incorrecte");
+        { // Réponse incorrecte
             quizManager.ReponduQCM(false); // On traite la réponse de l'utilisateur dans le quizManager (affichage des couleurs etc.)
             quizManager.IncrementeNbQuestAvantNouvelle(); // On augmente le renforcemment des connaissances
             quizManager.RepEntreeOK = false; // Indiquer dans quizManager que l'utilisateur a mal répondu

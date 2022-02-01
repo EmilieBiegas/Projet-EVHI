@@ -51,7 +51,6 @@ public class MainMenu : MonoBehaviour
         // UnityEngine.Debug.Log("Liste Concaténée (MainMenu) = " + tempsSelectionMenuTemp + " de taille " + tempsSelectionMenuTemp.Count);
 
         UserSelectionMenu saveDataSelectionMenu = new UserSelectionMenu();
-        // PB on doit enregistrer toutes les stats
         saveDataSelectionMenu.tempsSelectionMenu = new List<float>();
         saveDataSelectionMenu.tempsSelectionMenu = tempsSelectionMenuTemp;
         // Sauvegarde des données de TracesUtilisateur dans un fichier nommé SelectionMenuJ suivi du numéro du joueur
@@ -65,7 +64,7 @@ public class MainMenu : MonoBehaviour
     }
 
     public void QuitGame(){ // Associé au bouton quitter
-        // On arrête le chronomètre // PB ne sert à rien puisque l'on quitte le jeu à ce moment
+        // On arrête le chronomètre // Ne sert à rien puisque l'on quitte le jeu à ce moment
         // timer.Stop();
         // TimeSpan timeTaken = timer.Elapsed; // On regarde le temps passé sur le chronomètre
 
@@ -139,21 +138,25 @@ public class MainMenu : MonoBehaviour
         PlayerPrefs.SetFloat("ScoreJ" + PlayerPrefs.GetInt("NumJoueur"), hesitationManager.Score());
         // On enregistre les données statistique utilisateur
         UserStats saveDataStat = new UserStats();
-        // PB on doit enregistrer toutes les stats
+        
         saveDataStat.probaAcquisition = vocabUt.probaAcquisition;
         saveDataStat.nbRencontres = vocabUt.nbRencontres;
         saveDataStat.dateDerniereRencontre = vocabUt.dateDerniereRencontre;
         saveDataStat.nivSelection = hesitationManager.nivSelection; 
         saveDataStat.nivEntreeTexte = hesitationManager.nivEntreeTexte;
-        saveDataStat.occulaireHesite = hesitationManager.oculometreManager.occulaireHesite; // PB liste copy()?
+        saveDataStat.occulaireHesite = hesitationManager.oculometreManager.occulaireHesite;
         saveDataStat.occulaireSur = hesitationManager.oculometreManager.occulaireSur;
+        saveDataStat.list_probaL_init=vocabUt.list_probaL_init;
+        saveDataStat.list_proba_G=vocabUt.list_proba_G;
+        saveDataStat.list_proba_S=vocabUt.list_proba_S;
+        saveDataStat.list_proba_T=vocabUt.list_proba_T;
         // Sauvegarde des données de UserStats dans un fichier nommé Stats_Joueur suivi du numéro du joueur
         DataSaver.saveData(saveDataStat, "Stats_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
 
         // On enregistre les données d'initialisation utilisateur
         UserInitialisation saveDataInit = new UserInitialisation();
-        // PB on doit enregistrer toutes les stats
+        
         saveDataInit.nbBienRep = quizManager.nbBienRep;
         saveDataInit.nbMalRep = quizManager.nbMalRep;
         saveDataInit.numIte  = quizManager.numIte;
@@ -169,52 +172,19 @@ public class MainMenu : MonoBehaviour
         saveDataInit.TypeQuestion  = quizManager.TypeQuestion;
         saveDataInit.NbAncienneQuestionTemp  = quizManager.NbAncienneQuestionTemp;
         saveDataInit.NbNouvelleQuestionTemp  = quizManager.NbNouvelleQuestionTemp;
-        saveDataInit.IndQuestNonRencontrees = quizManager.IndQuestNonRencontrees; // PB copy de liste ??
+        saveDataInit.IndQuestNonRencontrees = quizManager.IndQuestNonRencontrees; 
         // Sauvegarde des données de UserInitialisation dans un fichier nommé Initialisation_Joueur suivi du numéro du joueur
         DataSaver.saveData(saveDataInit, "Initialisation_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
+        // On enregistre aussi les traces de réponse du joueur
+        UserTracesVeraciteRep t=new UserTracesVeraciteRep();
+        t.trace=new List<int>();
+        t.trace=quizManager.transformeListTraceReponseToDataTrace();
+        DataSaver.saveData(t,"traceReponse_Joueur"+PlayerPrefs.GetInt("NumJoueur"));
 
         // On enregistre les données de traces utilisateur
         DataSaver.SauvegarderTraces(hesitationManager.vitessesSelection, "TracesSelectJ"+ PlayerPrefs.GetInt("NumJoueur"));
         DataSaver.SauvegarderTraces(hesitationManager.vitessesEntreeTexte, "TracesTextJ"+ PlayerPrefs.GetInt("NumJoueur"));
-
-
-        /** PB  UserTraces saveDataTrace = new UserTraces();
-        // Initialisation des listes de vitesses de sélection et d'entrée de texte
-        saveDataTrace.vitessesSelection = new List<Tuple<float, bool>>[PlayerPrefs.GetInt("NbMotsVocab")]; 
-        saveDataTrace.vitessesEntreeTexte = new List<Tuple<float, bool>>[PlayerPrefs.GetInt("NbMotsVocab")];
-        // On fait une copie en profondeur
-        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
-        {
-            if (hesitationManager.vitessesSelection[i].Count>0)
-            {
-                saveDataTrace.vitessesSelection[i] = new List<Tuple<float, bool>>(hesitationManager.vitessesSelection[i]);
-            }else{
-                saveDataTrace.vitessesSelection[i] = new List<Tuple<float, bool>>();
-            }
-            
-            if (hesitationManager.vitessesEntreeTexte[i].Count>0)
-            {
-                saveDataTrace.vitessesEntreeTexte[i] = new List<Tuple<float, bool>>(hesitationManager.vitessesEntreeTexte[i]);
-            }else{
-                saveDataTrace.vitessesEntreeTexte[i] = new List<Tuple<float, bool>>();
-            }
-        }
-        // UnityEngine.Debug.Log("VITESSE SELECTION sauvegardée de taille : "+saveDataTrace.vitessesSelection.Length);
-        // Sauvegarde des données de UserTraces dans un fichier nommé Traces_Joueur suivi du numéro du joueur
-        DataSaver.saveData(saveDataTrace, "Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur")); 
-        // DataSaver.WriteToJsonFile<UserTraces>("Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur"), saveDataTrace); // PB 
-
-        // Affichage des données sauvegardées
-        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
-        {
-            if (saveDataTrace.vitessesSelection[i].Count > 0) 
-            {
-                // DateTime copyDateDerniereRencontre = saveData.dateDerniereRencontre[i]; // Pour ne pas transformer saveData.dateDerniereRencontre[i] en string
-                UnityEngine.Debug.Log("Sauvegarde vitessesSelection [" + i + "] =" + saveDataTrace.vitessesSelection[i][0]);
-                // UnityEngine.Debug.Log(saveData.dateDerniereRencontre[i] + " de type " + saveData.dateDerniereRencontre[i].GetType());
-            }
-        } **/
 
         //On load la scène de menu principal
         SceneManager.LoadScene("MainMenu"); 
@@ -243,7 +213,7 @@ public class MainMenu : MonoBehaviour
         // UnityEngine.Debug.Log("Liste tempsSelectionMenu Concaténée (MainMenu) = " + tempsSelectionMenu + " de taille " + tempsSelectionMenu.Count);
 
         UserSelectionMenu saveDataSelectionMenu = new UserSelectionMenu();
-        // PB on doit enregistrer toutes les stats
+        
         saveDataSelectionMenu.tempsSelectionMenu = new List<float>();
         saveDataSelectionMenu.tempsSelectionMenu = tempsSelectionMenu;
         // Sauvegarde des données de selection dans les menus dans un fichier nommé SelectionMenu

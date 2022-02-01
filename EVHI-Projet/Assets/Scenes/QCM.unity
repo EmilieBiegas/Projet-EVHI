@@ -1135,7 +1135,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 0}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!114 &478694625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1340,7 +1339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textAssetData: {fileID: 4900000, guid: 2650952661b2a204ba2657059882c408, type: 3}
   textExplications: {fileID: 4900000, guid: a017811df22774148a6f3c8e1fbf9d6f, type: 3}
-  textFauxAmis: {fileID: 4900000, guid: d46fefc4c7d51cd41824e035f004f30a, type: 3}
+  textFauxAmis: {fileID: 4900000, guid: 5fb87eb2d95085d42ab9785cf345c185, type: 3}
   myQr: []
 --- !u!4 &518164037
 Transform:
@@ -1876,7 +1875,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 192715049}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!61 &650495923
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2958,7 +2956,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 0}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!114 &974579207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3709,6 +3706,15 @@ MonoBehaviour:
   probaAcquisition: []
   nbRencontres: 
   dateDerniereRencontre: []
+  probaL_init: 0
+  proba_G: 0.25
+  proba_S: 0.02
+  proba_T: 0.5
+  PI: []
+  list_probaL_init: []
+  list_proba_G: []
+  list_proba_S: []
+  list_proba_T: []
 --- !u!4 &1164000566
 Transform:
   m_ObjectHideFlags: 0
@@ -4175,7 +4181,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 192715049}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!61 &1293379426
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5591,7 +5596,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 0}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!114 &1562530236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5678,7 +5682,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 0}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!114 &1563345403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6276,7 +6279,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 192715049}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!61 &1642905032
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7187,7 +7189,6 @@ MonoBehaviour:
   isCorrect: 0
   quizManager: {fileID: 192715049}
   indReponseCorrespond: 0
-  ficheManager: {fileID: 0}
 --- !u!61 &2046138525
 BoxCollider2D:
   m_ObjectHideFlags: 0

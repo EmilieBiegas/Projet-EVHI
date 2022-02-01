@@ -1,10 +1,8 @@
-// using System.Collections;
-// using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
 using System.Text;
-using Newtonsoft.Json; // PB JsonConvert.SerializeObject()
+using Newtonsoft.Json; 
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +25,6 @@ public class DataSaver
         {
             Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
         }
-        //Debug.Log("Chemin = " + path);
 
         try
         {
@@ -184,13 +181,13 @@ public class DataSaver
         if (!Directory.Exists(Path.GetDirectoryName(tempPath)))
         {
             // Debug.Log("Le dossier n'existe pas");
-            return traces; // PB default(List<Tuple<float, bool>>[]);
+            return traces; 
         }
 
         if (!File.Exists(tempPath))
         {
             // Debug.Log("Le fichier n'existe pas");
-            return traces; // PB default(List<Tuple<float, bool>>[]);
+            return traces; 
         }
 
         // On lit le fichier pour récupérer les valeurs
@@ -204,7 +201,7 @@ public class DataSaver
             while (line != null)
             {
                 // On créer l'instance associée
-                string[] subs = line.Split(' '); // PB \n
+                string[] subs = line.Split(' '); 
                 for (int i = 1; i < subs.Length; i+=2)
                 {
                     bool correct = true;

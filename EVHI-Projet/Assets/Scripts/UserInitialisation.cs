@@ -16,7 +16,7 @@ public class UserInitialisation
     public int NbQuestAvantNouvelleTemp; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
     public int NbAncienneQuestion; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
     public int NbNouvelleQuestion; // Le nombre de questions posées sur des mots non encore rencontrés depuis la dernière rencontre d'un ancien mot
-    public int NbQuestionsTotales; // Le nombre de questions rencontrées au total // PB ou depuis la dernière màj de NbQuestAvantNouvelle? // PB utile ?
+    public int NbQuestionsTotales; // Le nombre de questions rencontrées au total
     public bool inQCM; // Indique si la question à laquelle on vient de répondre est un QCM (true) ou non (false)
     
     // Pour retrouver la question posée dernièrement :

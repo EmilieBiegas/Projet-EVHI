@@ -1,10 +1,8 @@
 using System.Diagnostics;
 using System;
-// using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-//using System.Text; // PB régler les commentaires dans les using
+using UnityEngine.UI; // PB régler les commentaires dans les using et les debug
 
 // Classe permettant de gérer le quiz
 public class QuizManager : MonoBehaviour
@@ -35,15 +33,15 @@ public class QuizManager : MonoBehaviour
     public int NbQuestAvantNouvelle; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié seulement lorsque le cycle en cours est terminé)
     public int NbQuestAvantNouvelleTemp; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
     // NbQuestAvantNouvelle doit être non nul mais peut être supérieur à 0 (exprime le nb de questions ancienne avant d'en avoir une nouvelle) ou inférieur à 0 (exprime -le nb de questions nouvelle avant d'en avoir une ancienne)
-    // PB NbQuestAvantNouvelle peut etre négatif pour avoir plusieurs nouvelles questions avant une ancienne
-    // PB a modifier au cours du temps et du NbQuestionsTotales
+    // NbQuestAvantNouvelle peut etre négatif pour avoir plusieurs nouvelles questions avant une ancienne
     public int NbAncienneQuestion; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
     public int NbAncienneQuestionTemp; // Pour permettre de mettre à jour NbAncienneQuestion que quand l'utilisateur a répondu et pas avant (s'il a juste vu la question)
     public int NbNouvelleQuestion; // Le nombre de questions posées sur des mots non encore rencontrés depuis la dernière rencontre d'un ancien mot
     public int NbNouvelleQuestionTemp; // Pour permettre de mettre à jour NbNouvelleQuestion que quand l'utilisateur a répondu et pas avant (s'il a juste vu la question)
-    public int NbQuestionsTotales; // Le nombre de questions rencontrées au total // PB ou depuis la dernière màj de NbQuestAvantNouvelle? // PB utile ?
+    public int NbQuestionsTotales; // Le nombre de questions rencontrées au total 
     public bool inQCM; // Indique si la question à laquelle on vient de répondre est un QCM (true) ou non (false)
     public List<int> IndQuestNonRencontrees; // Indices des questions non encores posées
+    public List<bool>[] ListTraceReponse;
     private Stopwatch timer; // Le chronomètre permettant de mesurer le temps de sélection ou d'entrée de texte de l'utilisateur
     private string ReponseUtilisateur; // La réponse entrée par l'utilisateur lors d'une question à réponse entière
     public string TypeQuestion; // Le type de la question en cours (QCM ou Entier)
@@ -51,7 +49,8 @@ public class QuizManager : MonoBehaviour
     private bool loadAnciennePartie; // Booléen qui indique si on a load une ancienne partie (true) ou non (false)
     private bool Repondu; // Booléen qui indique si l'utilisateur a répondu à la question courrante ou non
     private bool ChronoEnMarche = false; // Booléen qui indique si le chronomètre est en marche (true), ou en pause (false)
-    // PB il y a d'autres attributs plus bas au dessus de l'initialisation
+    // Note : il y a d'autres attributs plus bas au dessus de l'initialisation
+
     void Start(){ // Pour l'initialisation
         // UnityEngine.Debug.Log("START DU QUIZ MANAGER");
 
@@ -67,7 +66,7 @@ public class QuizManager : MonoBehaviour
 
         // Le nombre de mots de vocabulaire est donné par la taille de la liste de question/réponses
         PlayerPrefs.SetInt("NbMotsVocab", QnA.Count); // On enregistre cette donnée dans les PlayerPrefs afin de pouvoir y accéder dans tous les scripts
-        UnityEngine.Debug.Log("INITIALISATION DU NOMBRE DE MOT DE VOCABULAIRE = " + QnA.Count);
+        // UnityEngine.Debug.Log("INITIALISATION DU NOMBRE DE MOT DE VOCABULAIRE = " + QnA.Count);
 
         // Pour le calcul de la vitesse de sélection 
         timer = new Stopwatch();
@@ -76,14 +75,115 @@ public class QuizManager : MonoBehaviour
         Initialisation();
     }
 
+    public void transformeDataTraceToListTraceReponse(List<int> ListTraceReponseTransforme){
+        //ListTraceReponseTransforme :separer par indice de mot :indice commence par 2; 0 : une reponse true;1:une reponse vrai; ex: 2001130104567: pour le premier mot on a sequence de reponse: vrai vrai false false,pour le deuxieme mot : vrai false vrai.et pas de reponse pour 4,5,6,7
+        ListTraceReponse=new List<bool>[PlayerPrefs.GetInt("NbMotsVocab")];
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
+        {
+            ListTraceReponse[i]=new List<bool>();
+        }
+        int ind=-1;
+        for (int i =0;i<ListTraceReponseTransforme.Count;i++){
+            if(ListTraceReponseTransforme[i]>1){
+                ind=ListTraceReponseTransforme[i]-2;
+                //continue;
+            }
+            if(ListTraceReponseTransforme[i]==0){
+                ListTraceReponse[ind].Add(true);
+            }
+            if(ListTraceReponseTransforme[i]==1){
+                ListTraceReponse[ind].Add(false);
+            }
+            
+        }
+
+    }
+    public List<int> transformeListTraceReponseToDataTrace(){
+        List<int> traces=new List<int>();
+        if(ListTraceReponse==null ||ListTraceReponse.Length<=0){
+            return traces;
+        }
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
+        {
+            traces.Add(i+2);
+            for(int j=0;j<ListTraceReponse[i].Count;j++){
+                if(ListTraceReponse[i][j]){
+                    traces.Add(0);
+                }else{
+                    traces.Add(1);
+                }
+            }
+
+            
+        }
+        return traces;        
+
+    }
+    public int GetNaturePlusFaibleRequisUtilisateur(){
+        //parmi tout les mots rancontres par utilisateur, chercher la nature de mot ou la moyenne requis de tous les mots rencontrée de cette nature est le plus faible
+        float[] sommeRequis=new float[5]{0.00f,0.00f,0.00f,0.00f,000f};
+        //float[] probaAcquisActuelles = new float[PlayerPrefs.GetInt("NbMotsVocab")];
+        //probaAcquisActuelles = vocUt.UpdateProbaAcquisitionOubli();
+        int[] nb=new int[5]{1,1,1,1,1};
+        for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++){
+            //ne compter pas les mots pas encore rencontré
+            if(vocUt.nbRencontres[i]==0){
+                continue;
+            }
+            bool typeNatureConnu=false;
+            if(QnA[i].explicationBonneReponse.nature.Contains("n.")){
+                sommeRequis[0]=sommeRequis[0]+vocUt.probaAcquisition[i];
+                nb[0]+=1;
+                //continue;
+            }
+            if(QnA[i].explicationBonneReponse.nature.Contains("a.")){
+                sommeRequis[1]=sommeRequis[1]+vocUt.probaAcquisition[i];
+                nb[1]+=1;
+                typeNatureConnu=true;
+                //UnityEngine.Debug.Log("=== i1 "+sommeRequis[1]);
+                //continue;
+            }
+            if(QnA[i].explicationBonneReponse.nature.Contains("v.")){
+                sommeRequis[2]=sommeRequis[2]+vocUt.probaAcquisition[i];
+                nb[2]+=1;
+                typeNatureConnu=true;
+                //UnityEngine.Debug.Log("=== i2 "+sommeRequis[2]);
+                //continue;
+            }
+            if(QnA[i].explicationBonneReponse.nature.Contains("adv.")){
+                sommeRequis[3]=sommeRequis[3]+vocUt.probaAcquisition[i];
+                nb[3]+=1;
+                typeNatureConnu=true;
+                //UnityEngine.Debug.Log("=== i3 "+sommeRequis[3]);
+            }
+            if(typeNatureConnu==false){
+                sommeRequis[4]=sommeRequis[4]+vocUt.probaAcquisition[i];
+                nb[4]+=1;                
+            }
+        }
+        float plusFaibleRequis =1;
+        int indPlusFaible=0;
+        for(int i=0;i<5;i++){
+            sommeRequis[i]=sommeRequis[i]/nb[i];
+            //UnityEngine.Debug.Log(" sommerequis "+i+" and "+sommeRequis[i]);
+            if(plusFaibleRequis>sommeRequis[i]){
+                plusFaibleRequis=sommeRequis[i];
+                indPlusFaible=i;
+            }
+        }
+        UnityEngine.Debug.Log("nature de plus faible requis (0:nom,1:adj,2:verbe,3:adverbe,4:others ) : "+indPlusFaible+" requis nom "+sommeRequis[0]+"requis adj "+sommeRequis[1]+"requis verbe "+sommeRequis[2]+"Requis adv "+sommeRequis[3]+"requis others "+sommeRequis[4]);
+        return indPlusFaible;
+
+    }
+
     // Fonction permettant d'initialiser les valeurs des attributs pour l'initialisation dans le cas d'un tout nouveau joueur
     void InitialiseUserInitialisation(){
         // On initialise les attributs caractérisant la dynamique du quiz
-        NbQuestAvantNouvelle = 1; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque fois que le cycle en cours se termine)
-        NbQuestAvantNouvelleTemp = 1; // Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
+        NbQuestAvantNouvelle = -3; //PB HERE 1 Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque fois que le cycle en cours se termine)
+        NbQuestAvantNouvelleTemp = -3; // PB HERE 1 Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
         NbAncienneQuestion = 0; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
         NbNouvelleQuestion = 0; // Le nombre de questions posées sur des mots pas encore rencontrés depuis la dernière rencontre d'un ancien mot
-        NbQuestionsTotales = 0; // Le nombre de questions rencontrées au total // PB ou depuis la dernière màj de NbQuestAvantNouvelle?
+        NbQuestionsTotales = 0; // Le nombre de questions rencontrées au total
 
         // Instantiation des variables pour l'initialisation
         nbBienRep = 0; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à la même question en entier
@@ -92,9 +192,12 @@ public class QuizManager : MonoBehaviour
 
         // On initialise les indices des questions non encore rencontrées
         IndQuestNonRencontrees = new List<int>();
+        ListTraceReponse=new List<bool>[PlayerPrefs.GetInt("NbMotsVocab")];
+
         for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
         {
             IndQuestNonRencontrees.Add(i);
+            ListTraceReponse[i]=new List<bool>();
         }
 
         inInitialisation = true; // On commence l'initialisation 
@@ -118,7 +221,7 @@ public class QuizManager : MonoBehaviour
         milliseconds = timeTaken.Milliseconds;
         // Temps passé en secondes :
         float floatTimeSpan = ((float)days*24*3600) + ((float)hours*3600) + ((float)minutes*60) + (float)seconds + ((float)milliseconds/1000);
-        UnityEngine.Debug.Log("Temps de sélection : " + floatTimeSpan + "secondes");
+        // UnityEngine.Debug.Log("Temps de sélection : " + floatTimeSpan + "secondes");
         // On enregistre ce temps (trace) dans le gérant d'hésitation
         hesitationManager.vitessesSelection[QuestionCourrante].Add(new Tuple<float, bool>(floatTimeSpan, correct));
         // UnityEngine.Debug.Log("vitessesSelection[" + QuestionCourrante + "] = " + hesitationManager.vitessesSelection[QuestionCourrante]);
@@ -126,7 +229,7 @@ public class QuizManager : MonoBehaviour
 
         inQCM = true; // On indique que la réponse à laquelle on vient de répondre est un QCM
         // On indique que l'on vient de rencontrer cette question, on enlève donc l'indice de cette question à la liste d'indice des questions non encore rencontrées
-        if (IndQuestNonRencontrees.Contains(QuestionCourrante)) // On ne met ça que quand on a répondu à un QCM puisqu'on répond toujours à un QCM avant de répondre à la question entière PB si ça change
+        if (IndQuestNonRencontrees.Contains(QuestionCourrante)) // On ne met ça que quand on a répondu à un QCM puisqu'on répond toujours à un QCM avant de répondre à la question entière 
         {
             IndQuestNonRencontrees.Remove(QuestionCourrante);
             // UnityEngine.Debug.Log("Enleve l'indice " + QuestionCourrante + " de IndQuestNonRencontrees");
@@ -138,7 +241,8 @@ public class QuizManager : MonoBehaviour
         NbAncienneQuestion = NbAncienneQuestionTemp; // On màj le NbAncienneQuestion mtn que l'utilisateur a répondu
         NbNouvelleQuestion = NbNouvelleQuestionTemp; // On màj le NbNouvelleQuestion mtn que l'utilisateur a répondu
         float hesite = hesitationManager.EstimationHesitationQCM(floatTimeSpan); // On estime l'hésitation de l'utilisateur
-        vocUt.UpdateProbaAcquisitionQCM(QuestionCourrante, correct, hesite); // On met à jour les probas d'acquisition 
+        ListTraceReponse[QuestionCourrante].Add(correct);
+        vocUt.UpdateProbaAcquisitionQCM(QuestionCourrante, correct, hesite,ListTraceReponse[QuestionCourrante]); // On met à jour les probas d'acquisition
 
         // On affiche la bonne réponse en vert et les autres en rouge
         for (int i = 0; i < options.Length; i++)
@@ -187,7 +291,7 @@ public class QuizManager : MonoBehaviour
         milliseconds = timeTaken.Milliseconds;
         // Temps passé en secondes :
         float floatTimeSpan = ((float)days*24*3600) + ((float)hours*3600) + ((float)minutes*60) + (float)seconds + ((float)milliseconds/1000);
-        UnityEngine.Debug.Log("Temps d'entrée de texte : " + floatTimeSpan + "secondes");
+        // UnityEngine.Debug.Log("Temps d'entrée de texte : " + floatTimeSpan + "secondes");
         // UnityEngine.Debug.Log("vitessesEntreeTexte[" + QuestionCourrante + "] = " + hesitationManager.vitessesEntreeTexte[QuestionCourrante]);
         // hesitationManager.ComparaisonVitesseEntreeTexte(nbCarRep);
 
@@ -219,6 +323,7 @@ public class QuizManager : MonoBehaviour
         }
         // On enregistre ce temps (trace) dans le gérant d'hésitation
         hesitationManager.AjoutVitesseEntreeTexte(QuestionCourrante, floatTimeSpan, nbCarRep, bonneRepEntree);
+        ListTraceReponse[QuestionCourrante].Add(bonneRepEntree);
 
         // UnityEngine.Debug.Log("QnA[QuestionCourrante].ReponseCorrecte = " + QnA[QuestionCourrante].ReponseCorrecte + " et ReponseUtilisateur = " + ReponseUtilisateur); // OK, .ToLower et .Sustring ne modifient pas la chaîne d'origine
         // UnityEngine.Debug.Log("Meme rep entree sans le to ? " + bonneRepEntree);
@@ -226,9 +331,9 @@ public class QuizManager : MonoBehaviour
         // On affiche le carré en vert si l'utilisateur a entré la bonne réponse et sinon on affiche en rouge son carré et la bonne réponse en vert
         if (bonneRepEntree)
         {
-            UnityEngine.Debug.Log("BONNE REPONSE !");
+            // UnityEngine.Debug.Log("BONNE REPONSE !");
             float hesite = hesitationManager.EstimationHesitationEntier(floatTimeSpan, nbCarRep); // On estime l'hésitation de l'utilisateur
-            vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, true, hesite); // On met à jour les probas d'acquisition
+            vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, true, hesite, ListTraceReponse[QuestionCourrante]); // On met à jour les probas d'acquisition
             RepEntreeOK = true; // On indique que l'utilisateur a donné la bonne réponse
             DecrementeNbQuestAvantNouvelle(); // On augmente l'étendu de l'apprentissage (plutôt que le renforcement des connaissances)
 
@@ -241,11 +346,11 @@ public class QuizManager : MonoBehaviour
             OkButton.GetComponent<Button>().interactable = false;
         }else
         {
-            UnityEngine.Debug.Log("MAUVAISE REPONSE !");
+            // UnityEngine.Debug.Log("MAUVAISE REPONSE !");
             float hesite = hesitationManager.EstimationHesitationEntier(floatTimeSpan, nbCarRep); // On estime l'hésitation de l'utilisateur
-            vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, false, hesite); // On met à jour les probas d'acquisition
+            vocUt.UpdateProbaAcquisitionQEntier(QuestionCourrante, false, hesite,ListTraceReponse[QuestionCourrante]); // On met à jour les probas d'acquisition
             RepEntreeOK = false; // On indique que l'utilisateur a donné la mauvaise réponse
-            IncrementeNbQuestAvantNouvelle(); // PB on augmente le renforcemment des connaissances (càd augmenter le nombre de questions déjà vues nécessaires avant une nouvelle question)
+            IncrementeNbQuestAvantNouvelle(); // On augmente le renforcemment des connaissances (càd augmenter le nombre de questions déjà vues nécessaires avant une nouvelle question)
 
             // On met la réponse rentrée en rouge et on affiche un deuxième carré contenant la bonne réponse en vert
             var colors = EntreeRep.GetComponent<InputField>().colors;
@@ -274,12 +379,10 @@ public class QuizManager : MonoBehaviour
             {
                 // UnityEngine.Debug.Log("Iteration " + numIte + " a répondu à la question entière CORRECTEMENT");
                 nbBienRep += 1;
-                // PB HERE ajouter (le temps de sélection, d'entrée de texte et) les données occulomètriques de cette question dans les données "sûr"
             }else
             {
                 // UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu à la question entière");
                 nbMalRep += 1;
-                // PB ajouter (le temps de sélection, d'entrée de texte et) les données occulomètriques de cette question dans les données "hesite"
             }
         }
         
@@ -329,7 +432,7 @@ public class QuizManager : MonoBehaviour
     // Fonction permettant de choisir une question et de la générer
     void genererQuestion(){
         // UnityEngine.Debug.Log("On génère normalement désormais");
-        /** PB Choisir la question posée */
+        /** Choisir la question posée */
         // UnityEngine.Debug.Log("ON CHOISIT LA QUESTION POSEE NbQuestAvantNouvelle = " + NbQuestAvantNouvelle + "NbQuestAvantNouvelleTemp = " + NbQuestAvantNouvelleTemp + " NbAncienneQuestion = " + NbAncienneQuestion + " NbNouvelleQuestion = " + NbNouvelleQuestion);
 
         // NbQuestAvantNouvelle doit être non nul mais peut être supérieur à 0 (exprime le nb de questions ancienne avant d'en avoir une nouvelle) ou inférieur à 0 (exprime -le nb de questions nouvelle avant d'en avoir une ancienne)
@@ -370,10 +473,10 @@ public class QuizManager : MonoBehaviour
                     NbAncienneQuestionTemp = NbAncienneQuestion - 1; // On n'incrémente pas le nombre de questions anciennes
                     if (QuestionCourrante != 0)
                     {
-                        minInd = 0; // On pose la première question // PB à changer ?
+                        minInd = 0; // On pose la première question 
                     }else
                     {
-                        minInd = 1; // On pose la seconde question // PB à changer ?
+                        minInd = 1; // On pose la seconde question
                     }
                 }
                 QuestionCourrante = minInd;
@@ -382,22 +485,6 @@ public class QuizManager : MonoBehaviour
             {
                 // Dans ce cas, on pose une question sur un mot non encore rencontré
                 NbAncienneQuestionTemp = 0; // On réinitialise le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'une nouvelle question
-                
-                // List<int> IndQuestNonRencontrees = new List<int>(); // Indices des questions non encores posées
-                // // PB pour gain de temps, on peut plutot initialiser a tous les indices et les enlever a chaque fois qu'on rencontre une nouvelle question
-                // for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
-                // {
-                //     if (vocUt.nbRencontres[i] == 0) // Si on n'a jamais rencontré la question, on l'ajoute à la liste
-                //     {
-                //         IndQuestNonRencontrees.Add(i);
-                //     }
-                // }
-
-                // UnityEngine.Debug.Log("Ensemble des questions non encore rencontrées :");
-                // for (int i = 0; i < IndQuestNonRencontrees.Count; i++)
-                // {
-                //     UnityEngine.Debug.Log(IndQuestNonRencontrees[i]);
-                // }
 
                 if (IndQuestNonRencontrees.Count == 0) // Si toutes les questions ont déjà été posées, on prend celle de proba d'acquisition minimum
                 {
@@ -428,11 +515,49 @@ public class QuizManager : MonoBehaviour
                     QuestionCourrante = minInd;
                 }else 
                 {
-                    // On choisit au hasard une question non rencontrée
-                    System.Random rnd = new System.Random();
-                    int IndListe  = rnd.Next(0, IndQuestNonRencontrees.Count);  // Créer un numéro entre 0 et la taille de la liste
-                
-                    QuestionCourrante =  IndQuestNonRencontrees[IndListe];
+                    int indPlusFaibleNature=GetNaturePlusFaibleRequisUtilisateur();
+                    List<int> IndQuestNonRencontreesNature=new List<int>();
+                    
+                    switch(indPlusFaibleNature){
+                        case 0:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("n.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                                }
+                            }
+                            break;
+                        case 1:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("a.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]); 
+                                }
+                            }
+                            break;
+                        case 2:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("v.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                                }
+                            }
+                            break;
+                        case 3:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("adv.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                                    
+                                }
+                            }
+                            break;
+
+                        case 4:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                            }
+                            break;                                                                   
+                        }
+                        System.Random rnd = new System.Random();
+                        int IndListe  = rnd.Next(0, IndQuestNonRencontreesNature.Count);  // Créer un numéro entre 0 et la taille de la liste
+                        QuestionCourrante =  IndQuestNonRencontreesNature[IndListe]; 
                 }
 
                 NbQuestAvantNouvelle = NbQuestAvantNouvelleTemp; // On met à jour les caractèristiques du nouveau cycle maintenant que l'on en commence un nouveau (et pas avant)  
@@ -449,16 +574,6 @@ public class QuizManager : MonoBehaviour
             {
                 // Dans ce cas, on pose encore une question sur un mot non encore rencontré
                 NbNouvelleQuestionTemp = NbNouvelleQuestion + 1; // On ne le change que si l'utilisateur a répondu à la question et pas tout de suite
-            
-                // List<int> IndQuestNonRencontrees = new List<int>(); // Indices des questions non encores posées
-                // // PB pour gain de temps, on peut plutot initialiser a tous les indices et les enlever a chaque fois qu'on rencontre une nouvelle question
-                // for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
-                // {
-                //     if (vocUt.nbRencontres[i] == 0) // Si on n'a jamais rencontré la question, on l'ajoute à la liste
-                //     {
-                //         IndQuestNonRencontrees.Add(i);
-                //     }
-                // }
 
                 if (IndQuestNonRencontrees.Count == 0) // Si toutes les questions ont déjà été posées, on prend celle de proba d'acquisition minimum
                 {
@@ -489,11 +604,49 @@ public class QuizManager : MonoBehaviour
                     QuestionCourrante = minInd;
                 }else
                 {
-                    // On choisit au hasard une question non rencontrée
-                    System.Random rnd = new System.Random();
-                    int IndListe  = rnd.Next(0, IndQuestNonRencontrees.Count);  // Créer un numéro entre 0 et la taille de la liste
-                
-                    QuestionCourrante =  IndQuestNonRencontrees[IndListe];
+                    int indPlusFaibleNature=GetNaturePlusFaibleRequisUtilisateur();
+                    List<int> IndQuestNonRencontreesNature=new List<int>();
+                    
+                    switch(indPlusFaibleNature){
+                        case 0:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("n.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                                }
+                            }
+                            break;
+                        case 1:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("a.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]); 
+                                }
+                            }
+                            break;
+                        case 2:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("v.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                                }
+                            }
+                            break;
+                        case 3:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                if(QnA[IndQuestNonRencontrees[i]].explicationBonneReponse.nature.Contains("adv.")){
+                                    IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                                    
+                                }
+                            }
+                            break;
+
+                        case 4:
+                            for (int i =0;i<IndQuestNonRencontrees.Count;i++){
+                                IndQuestNonRencontreesNature.Add(IndQuestNonRencontrees[i]);
+                            }
+                            break;                                                                   
+                        }
+                        System.Random rnd = new System.Random();
+                        int IndListe  = rnd.Next(0, IndQuestNonRencontreesNature.Count);  // Créer un numéro entre 0 et la taille de la liste
+                        QuestionCourrante =  IndQuestNonRencontreesNature[IndListe];
                 }
 
             }else // Si (-1)*NbNouvelleQuestion >= NbQuestAvantNouvelle
@@ -531,10 +684,10 @@ public class QuizManager : MonoBehaviour
                     NbAncienneQuestionTemp = NbAncienneQuestion - 1; // On n'incrémente pas le nombre de questions anciennes
                     if (QuestionCourrante != 0)
                     {
-                        minInd = 0; // On pose la première question // PB à changer ?
+                        minInd = 0; // On pose la première question
                     }else
                     {
-                        minInd = 1; // On pose la seconde question // PB à changer ?
+                        minInd = 1; // On pose la seconde question 
                     }
                 }
                 QuestionCourrante = minInd;   
@@ -544,34 +697,9 @@ public class QuizManager : MonoBehaviour
                 hesitationManager.MajNivSelectionTraces();
             }
         }
-        // Test choisir la question la moins posée //PB a changer plus tard
-        // // UnityEngine.Debug.Log("On cherche la question suivante :");
-        // var minNbPosees = vocUt.nbRencontres[0];
-        // var minInd = 0;
-        // // UnityEngine.Debug.Log("Initialisation :" + minNbPosees);
-        // // UnityEngine.Debug.Log("Taille vocUt.nbRencontre ="+vocUt.nbRencontres.Length);
-        // // UnityEngine.Debug.Log("QnA.Count="+QnA.Count);
-        // for (int i = 0; i < QnA.Count; i++)
-        // {
-        //     // UnityEngine.Debug.Log("On compare min actuel =" + minNbPosees + " avec " + vocUt.nbRencontres[i]);
-        //     // Debug.Log("i="+i);
-        //     if (minNbPosees > vocUt.nbRencontres[i])
-        //     {
-        //         minNbPosees = vocUt.nbRencontres[i];
-        //         minInd = i;
-        //     }
-        // }
-        // QuestionCourrante = minInd;
 
-
-        // Si la question a déjà été rencontrée et que l'utilisateur avait bien répondu à ce moment là, on propose alors la question sous forme Entier (et pas QCM) //PB a changer plus tard
+        // Si la question a déjà été rencontrée et que l'utilisateur avait bien répondu à ce moment là, on propose alors la question sous forme Entier (et pas QCM) 
         // if (vocUt.nbRencontres[QuestionCourrante] > 0 && vocUt.probaAcquisition[QuestionCourrante] > 0.75) 
-        // {
-        //     TypeQuestion = "Entier";
-        // }else
-        // {
-        //     TypeQuestion = "QCM";
-        // }
 
         // Si la question a déjà été rencontrée et que l'utilisateur s'est amélioré sur ce mot, on propose alors la question sous forme Entier (et pas QCM) 
         if (vocUt.nbRencontres[QuestionCourrante] > 0 && hesitationManager.Amelioration(QuestionCourrante)) 
@@ -657,9 +785,9 @@ public class QuizManager : MonoBehaviour
         }else
         {
             PanneauFicheEntier.SetActive(false);
-            // On doit faire réapparaître le champs de saisie de réponse et le bouton OK
+            // On doit faire réapparaître le champs de saisie de réponse (et le bouton OK)
             EntreeRep.SetActive(true);
-            // OkButton.SetActive(true); // PB a enlever si on veut remettre le bouton OK
+            // OkButton.SetActive(true); // A enlever si on veut remettre le bouton OK
             // On doit aussi faire réapparaître le champs de la bonne réponse si il était précedemment affiché (càd si l'utilisateur avait mal répondu)
             if (RepEntreeOK == false)
             {
@@ -673,7 +801,6 @@ public class QuizManager : MonoBehaviour
     {
         ReponseUtilisateur = userInput.text;
         nbCarRep = userInput.text.Length + 1; // Le nombre de caractères entrés par l'utilisateur + la touche "entrée"
-        // UnityEngine.Debug.Log(userInput.text);
     }
 
     // Fonction pour incrémenter le nombre d'ancienne question rencontré
@@ -711,14 +838,13 @@ public class QuizManager : MonoBehaviour
     public int nbMalRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à mal répondu à la même question en entier
     public int numIte; // Numéro de l'itération dans l'initialisation
     public void Initialisation(){ // Permet de faire l'initialisation afin de cibler le niveau de l'utilisateur en lui posant les premières questions
-        var nbIteMax = 4; // Nombre maximum d'itérations avant de génerer les questions "normalement" 
-        //PB prendre en compte si on n a pas assez de donnees sur tous les cas possibles
+        var nbIteMax = -1; //PB HERE 4 Nombre maximum d'itérations avant de génerer les questions "normalement" 
 
-        UnityEngine.Debug.Log("Initialisation ite " + numIte + " avec nbBienRep = " + nbBienRep + "et nbMalRep = " + nbMalRep);
+        // UnityEngine.Debug.Log("Initialisation ite " + numIte + " avec nbBienRep = " + nbBienRep + "et nbMalRep = " + nbMalRep);
 
-        // PB sauvegarder les données d'hésitation de l'utilisateur grâce à cette initialisation
+        // On sauvegarde les données d'hésitation de l'utilisateur grâce à cette initialisation
         // On fait l'initialisation jusqu'à ce que l'on ai rencontré une fois les deux cas de figure ou jusqu'à un nombre défini d'itération
-        if((nbBienRep < 1 || nbMalRep < 1) && numIte <= nbIteMax) // PB ajouter un nbr d'itération max qd même
+        if((nbBienRep < 1 || nbMalRep < 1) && numIte <= nbIteMax) // On a ajouté un nbr d'itération max qd même
         {
             // UnityEngine.Debug.Log("Toujours dans initialisation");
             if (loadAnciennePartie)
@@ -760,7 +886,7 @@ public class QuizManager : MonoBehaviour
     // Fonction appelée lorsque l'utilisateur est encore dans la phase d'initialisation et qu'il a répondu à un QCM (après avoir cliqué sur le bouton suivant)
     void InitialisationReponduQCM(){
         if (RepEntreeOK)
-        {   // PB Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
+        {   // Peut etre enregistrer les questions auquelles il a bien répondu et lui demander de les écrire en entier après pour pas faire à la suite à chaque fois
             // UnityEngine.Debug.Log("Iteration " + numIte + " a répondu au QCM CORRECTEMENT");
             // Si l'utilisateur clique sur la bonne réponse, on lui repose la question sous forme d'écriture complète
             TypeQuestion = "Entier";
@@ -770,7 +896,7 @@ public class QuizManager : MonoBehaviour
             afficherPanneauEnFctTypeQuestion();
         }else{
             // UnityEngine.Debug.Log("Iteration " + numIte + " a MAL répondu au QCM");
-            // Si l'utilisateur répond faux c'est qu'il hésitait (PB à prendre en compte même si il répond faux au QCM)
+            // Si l'utilisateur répond faux c'est qu'il hésitait (à prendre en compte même si il répond faux au QCM)
             Initialisation(); // On continue l'initialisation
         }
     }
@@ -808,8 +934,6 @@ public class QuizManager : MonoBehaviour
     void OnEnable()
     {
         // On charge les données sauvegardées
-        // UnityEngine.Debug.Log("ON ENABLE QuizManager : ON LOAD DATA");
-
         // Chargement des données de l'utilisateur en question
         if (PlayerPrefs.HasKey("NumJoueur")) // Normalement toujours vrai
         {
@@ -821,7 +945,7 @@ public class QuizManager : MonoBehaviour
             UserStats loadedData = DataSaver.loadData<UserStats>("Stats_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
             // UnityEngine.Debug.Log("PASSE LE LOAD, loadedData = " + loadedData);
-            if (loadedData == null || EqualityComparer<UserStats>.Default.Equals(loadedData, default(UserStats)))// PB || loadedData.vocabUtilisateur == null) // ou ""
+            if (loadedData == null || EqualityComparer<UserStats>.Default.Equals(loadedData, default(UserStats)))// || loadedData.vocabUtilisateur == null) // ou ""
             {
                 // UnityEngine.Debug.Log("PAS DE DATA A LOAD");
                 // UnityEngine.Debug.Log("Aucune donnée statistique associée à ce joueur pour l'instant");
@@ -832,25 +956,23 @@ public class QuizManager : MonoBehaviour
             }else
             {
                 // Si il y a quelque chose dans les données chargées, on les charge
-                // UnityEngine.Debug.Log("Proba d'acquisition récupéré = " + loadedData.probaAcquisition);
-                // UnityEngine.Debug.Log("NbRencontres récupéré = " + loadedData.nbRencontres);
-                // UnityEngine.Debug.Log("dateDerniereRencontre récupéré = " + loadedData.dateDerniereRencontre);
-                // UnityEngine.Debug.Log("NBMOTVOCAB LOAD QUIZMANAGER : = " + PlayerPrefs.GetInt("NbMotsVocab"));
 
                 // Mise à jour des données du joueur
                 vocUt.probaAcquisition = new float[PlayerPrefs.GetInt("NbMotsVocab")];
                 vocUt.nbRencontres = new int[PlayerPrefs.GetInt("NbMotsVocab")];
                 vocUt.dateDerniereRencontre = new string[PlayerPrefs.GetInt("NbMotsVocab")];
+                vocUt.list_probaL_init=new float[PlayerPrefs.GetInt("NbMotsVocab")];
+                vocUt.list_proba_G=new float[PlayerPrefs.GetInt("NbMotsVocab")];
+                vocUt.list_proba_S=new float[PlayerPrefs.GetInt("NbMotsVocab")];
+                vocUt.list_proba_T=new float[PlayerPrefs.GetInt("NbMotsVocab")];
 
                 Array.Copy(loadedData.probaAcquisition, vocUt.probaAcquisition, PlayerPrefs.GetInt("NbMotsVocab"));
-                Array.Copy(loadedData.nbRencontres, vocUt.nbRencontres, PlayerPrefs.GetInt("NbMotsVocab"));
-                // PB sans copy : vocUt.nbRencontres = loadedData.nbRencontres;
-                // PB sans copy : vocUt.dateDerniereRencontre = loadedData.dateDerniereRencontre;
-
-                // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre == null " + loadedData.dateDerniereRencontre == null);
-                // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre = " + loadedData.dateDerniereRencontre);
-                // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre.Length = " + loadedData.dateDerniereRencontre.Length);
-
+                Array.Copy(loadedData.nbRencontres, vocUt.nbRencontres, PlayerPrefs.GetInt("NbMotsVocab"));                
+                Array.Copy(loadedData.list_probaL_init, vocUt.list_probaL_init, PlayerPrefs.GetInt("NbMotsVocab"));
+                Array.Copy(loadedData.list_proba_G, vocUt.list_proba_G, PlayerPrefs.GetInt("NbMotsVocab"));
+                Array.Copy(loadedData.list_proba_S, vocUt.list_proba_S, PlayerPrefs.GetInt("NbMotsVocab"));
+                Array.Copy(loadedData.list_proba_T, vocUt.list_proba_T, PlayerPrefs.GetInt("NbMotsVocab"));
+                
                 for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
                 {
                     if (loadedData.dateDerniereRencontre[i] != null) // On ne charge que les données qui existent (les autres restent vides mais on ne les consultera pas donc pas de problèmes)
@@ -869,35 +991,26 @@ public class QuizManager : MonoBehaviour
                 hesitationManager.nivEntreeTexte = loadedData.nivEntreeTexte;
                 hesitationManager.oculometreManager.occulaireHesite = new List<Vector2>(loadedData.occulaireHesite);
                 hesitationManager.oculometreManager.occulaireSur = new List<Vector2>(loadedData.occulaireSur);
-                UnityEngine.Debug.Log("Liste hesitation : "+hesitationManager.oculometreManager.occulaireHesite);
+                // UnityEngine.Debug.Log("Liste hesitation : "+hesitationManager.oculometreManager.occulaireHesite);
             }
-            
-            // Affichage des données chargées
-            // for (int i = 0; i < nbMotVocab; i++)
-            // {
-            //     // UnityEngine.Debug.Log("Proba d'acquisition [" + i + "] =" + loadedData.probaAcquisition[i]);
-            //     // UnityEngine.Debug.Log("Proba d'acquisition VocUt [" + i + "] =" + vocUt.probaAcquisition[i]);
-            //     // UnityEngine.Debug.Log("Nb rencontres [" + i + "] =" + loadedData.nbRencontres[i]);
-            //     // UnityEngine.Debug.Log("Nb rencontres VocUt [" + i + "] =" + vocUt.nbRencontres[i]);
 
-            //     // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre = " + loadedData.dateDerniereRencontre);
-            //     // UnityEngine.Debug.Log("loadedData.dateDerniereRencontre.Length = " + loadedData.dateDerniereRencontre.Length);
-            //     if (loadedData.dateDerniereRencontre[i] != null) // PB Attention, dateDerniereRencontre peut être null
-            //     {
-            //         // DateTime copyDateDerniereRencontre = loadedData.dateDerniereRencontre[i]; // Pour ne pas transformer loadedData.dateDerniereRencontre[i] en string
-            //         // DateTime copyDateDerniereRencontreVoc = vocUt.dateDerniereRencontre[i]; // Pour ne pas transformer vocUtData.dateDerniereRencontre[i] en string
-            //         // UnityEngine.Debug.Log("Date derniere rencontres [" + i + "] =" + copyDateDerniereRencontre.ToString("MM/dd/yyyy HH:mm:ss"));
-            //         // UnityEngine.Debug.Log("Date derniere rencontres VocUt [" + i + "] =" + copyDateDerniereRencontreVoc.ToString("MM/dd/yyyy HH:mm:ss"));
-            //     }
-            // }
-
+            // *****
+            // On charge les traces de véracité de réponse du joueur
+            UserTracesVeraciteRep load_ListTraceReponse = DataSaver.loadData<UserTracesVeraciteRep>("traceReponse_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
+            if(load_ListTraceReponse==null){
+                ListTraceReponse=new List<bool>[PlayerPrefs.GetInt("NbMotsVocab")];
+                for (int i = 0; i < PlayerPrefs.GetInt("NbMotsVocab"); i++)
+                {
+                    ListTraceReponse[i]=new List<bool>();
+                }
+            }else{
+                transformeDataTraceToListTraceReponse(load_ListTraceReponse.trace);
+            }
 
             // *****
             // On charge les données d'initialisation du joueur concerné 
-            // UnityEngine.Debug.Log("ON CHARGE LES DONNEES D INITIALISATION");
             UserInitialisation loadedDataInit = DataSaver.loadData<UserInitialisation>("Initialisation_Joueur" + PlayerPrefs.GetInt("NumJoueur"));
 
-            // UnityEngine.Debug.Log("LoadedData = " + loadedDataInit);
             if (loadedDataInit == null || EqualityComparer<UserInitialisation>.Default.Equals(loadedDataInit, default(UserInitialisation)))
             {
                 // UnityEngine.Debug.Log("Aucune donnée d'initialisation associée à ce joueur pour l'instant");
@@ -925,7 +1038,7 @@ public class QuizManager : MonoBehaviour
                 NbAncienneQuestionTemp = loadedDataInit.NbAncienneQuestionTemp;
                 NbNouvelleQuestionTemp = loadedDataInit.NbNouvelleQuestionTemp;
                 IndQuestNonRencontrees = new List<int>(); 
-                IndQuestNonRencontrees = loadedDataInit.IndQuestNonRencontrees; // PB Copy de list
+                IndQuestNonRencontrees = loadedDataInit.IndQuestNonRencontrees; 
 
                 // UnityEngine.Debug.Log("IndQuestNonRencontrees CHARGE = " + IndQuestNonRencontrees + " de taille " + IndQuestNonRencontrees.Count);
 
@@ -940,46 +1053,6 @@ public class QuizManager : MonoBehaviour
             hesitationManager.vitessesSelection = DataSaver.ChargerTraces("TracesSelectJ"+ PlayerPrefs.GetInt("NumJoueur"));
             hesitationManager.vitessesEntreeTexte = DataSaver.ChargerTraces("TracesTextJ"+ PlayerPrefs.GetInt("NumJoueur"));
 
-
-            /** PB
-            // UnityEngine.Debug.Log("ON CHARGE LES DONNEES DE TRACE");
-            UserTraces loadedDataTrace = DataSaver.loadData<UserTraces>("Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur")); 
-            // UserTraces loadedDataTrace = DataSaver.ReadFromJsonFile<UserTraces>("Traces_Joueur" + PlayerPrefs.GetInt("NumJoueur")); // PB
-            // UnityEngine.Debug.Log("LoadedData = " + loadedDataInit);
-            if (loadedDataTrace == null || EqualityComparer<UserTraces>.Default.Equals(loadedDataTrace, default(UserTraces)))
-            {
-                // UnityEngine.Debug.Log("Aucune donnée de trace associée à ce joueur pour l'instant");
-                // On initialise les attributs du tout nouvel utilisateur pour qu'il puisse commencer sa partie
-                hesitationManager.ListesDefaut(); // On met les listes par défaut 
-            }else
-            {
-                UnityEngine.Debug.Log("PB LOADED DATA TRACE : "+loadedDataTrace);
-                UnityEngine.Debug.Log("PB LOADED DATA TRACE VITESSE SELECTION : "+loadedDataTrace.vitessesSelection);
-                UnityEngine.Debug.Log("PB LOADED DATA TRACE VITESSE ENTREE TEXT : "+loadedDataTrace.vitessesEntreeTexte);
-                // UnityEngine.Debug.Log("Chargement des données de trace associée à ce joueur...");
-                // Si il y a quelque chose dans les données chargées, on les charge
-                // Mise à jour des données du joueur
-                hesitationManager.ListesDefaut(); // On met les listes par défaut
-                if (loadedDataTrace.vitessesSelection==null)
-                {
-                    UnityEngine.Debug.Log("PROBLEME, VITESSE SELECTION NULL");
-                }
-                for (int i = 0; i < loadedDataTrace.vitessesSelection.Length; i++)
-                {
-                    if (loadedDataTrace.vitessesSelection[i].Count>0)
-                    {
-                        hesitationManager.vitessesSelection[i] = new List<Tuple<float, bool>>(loadedDataTrace.vitessesSelection[i]); 
-                    }
-                }
-                for (int i = 0; i < loadedDataTrace.vitessesEntreeTexte.Length; i++)
-                {
-                    if (loadedDataTrace.vitessesEntreeTexte[i].Count>0)
-                    {
-                        hesitationManager.vitessesEntreeTexte[i] = new List<Tuple<float, bool>>(loadedDataTrace.vitessesEntreeTexte[i]); 
-                    }
-                }
-            } **/
-
             // *****
             // On initialise le niveau de vitesse d'entrée de texte de l'utilisateur avec les données récupérées lors de sa saisie de pseudo 
             if (PlayerPrefs.HasKey("TmpsEntreePseudoJ" + NumJoueur))
@@ -988,7 +1061,7 @@ public class QuizManager : MonoBehaviour
                 hesitationManager.MajNivEntreeeTextePseudo(temps, PlayerPrefs.GetString("PseudoJ" + NumJoueur).Length + 1); // Le nombre de caractères du pseudo + la touche entrée
             }else
             {
-                // UnityEngine.Debug.Log("Pas de pseudo associé à ce joueur");
+                // Pas de pseudo associé à ce joueur
             }
 
             // *****
@@ -1017,9 +1090,7 @@ public class QuizManager : MonoBehaviour
 
         }else
         {
-            UnityEngine.Debug.Log("PB PROBLEME, JOUEUR NON PRECISE !!");
+            UnityEngine.Debug.Log("PROBLEME, JOUEUR NON PRECISE !!");
         }
     }
 }
-
-//PB Enlever les Debug et les PB

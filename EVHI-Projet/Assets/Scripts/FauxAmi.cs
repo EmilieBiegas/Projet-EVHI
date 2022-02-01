@@ -1,8 +1,7 @@
 [System.Serializable] 
-// Classe représentant les question / réponses
+// Classe représentant les faux amis
 public class FauxAmi
 {
-    //public string motcorrecte;//
-    public string fauxami;//
+    public string fauxami;
     public string traduction;
 }
