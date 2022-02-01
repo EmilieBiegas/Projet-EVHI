@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // PB régler les commentaires dans les using et les debug
+using UnityEngine.UI; 
 
 // Classe permettant de gérer le quiz
 public class QuizManager : MonoBehaviour
@@ -179,8 +179,8 @@ public class QuizManager : MonoBehaviour
     // Fonction permettant d'initialiser les valeurs des attributs pour l'initialisation dans le cas d'un tout nouveau joueur
     void InitialiseUserInitialisation(){
         // On initialise les attributs caractérisant la dynamique du quiz
-        NbQuestAvantNouvelle = -3; //PB HERE 1 Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque fois que le cycle en cours se termine)
-        NbQuestAvantNouvelleTemp = -3; // PB HERE 1 Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
+        NbQuestAvantNouvelle = -3; //PB 1 Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque fois que le cycle en cours se termine)
+        NbQuestAvantNouvelleTemp = -3; // PB 1 Le nombre de questions nécessaires sur des mots déjà rencontrés avant une question sur un mot non encore rencontré (modifié à chaque réponse de l'utilisateur)
         NbAncienneQuestion = 0; // Le nombre de questions posées sur des mots déjà rencontrés depuis la dernière rencontre d'un nouveau mot
         NbNouvelleQuestion = 0; // Le nombre de questions posées sur des mots pas encore rencontrés depuis la dernière rencontre d'un ancien mot
         NbQuestionsTotales = 0; // Le nombre de questions rencontrées au total
@@ -838,7 +838,7 @@ public class QuizManager : MonoBehaviour
     public int nbMalRep; // Nombre de fois où l'utilisateur a bien répondu au QCM puis à mal répondu à la même question en entier
     public int numIte; // Numéro de l'itération dans l'initialisation
     public void Initialisation(){ // Permet de faire l'initialisation afin de cibler le niveau de l'utilisateur en lui posant les premières questions
-        var nbIteMax = -1; //PB HERE 4 Nombre maximum d'itérations avant de génerer les questions "normalement" 
+        var nbIteMax = -1; //PB 4 Nombre maximum d'itérations avant de génerer les questions "normalement" 
 
         // UnityEngine.Debug.Log("Initialisation ite " + numIte + " avec nbBienRep = " + nbBienRep + "et nbMalRep = " + nbMalRep);
 

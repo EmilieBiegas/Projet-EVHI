@@ -21,7 +21,6 @@ ScriptsOnlyBuild:
     - UnityEditor.U2D.Animation.BoneGizmo
     Unity.2D.IK.Editor.dll:
     - UnityEditor.U2D.IK.IKEditorManager
-    - UnityEditor.U2D.IK.IKGizmos
     Unity.2D.Tilemap.Editor.dll:
     - UnityEditor.Tilemaps.GridPaintingState
     - UnityEditor.Tilemaps.GridPaletteBrushes
@@ -164,9 +163,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4384}
     - Class: 114
-      Script: {instanceID: 4614}
+      Script: {instanceID: 4616}
     - Class: 114
-      Script: {instanceID: 4830}
+      Script: {instanceID: 4832}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -316,13 +315,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4444}
     - Class: 114
-      Script: {instanceID: 4650}
+      Script: {instanceID: 4652}
     - Class: 114
-      Script: {instanceID: 4960}
+      Script: {instanceID: 4962}
     - Class: 114
-      Script: {instanceID: 5396}
+      Script: {instanceID: 5398}
     - Class: 114
-      Script: {instanceID: 5448}
+      Script: {instanceID: 5450}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -978,4 +977,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/QCM.unity
   - Assets/Scenes/MenuParametres.unity
   - Assets/Scenes/MenuUtilisateurs.unity
-  playerPath: C:/Users/Mimis/EVHI-Projet_Build_Oculometre/EVHI-Projet.exe
+  playerPath: C:/Users/Mimis/EVHI-Projet_Build_FINAL/EVHI-Projet.exe
