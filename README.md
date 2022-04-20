@@ -2,10 +2,7 @@
 
 Projet réalisé dans le cadre de l'UE Environnements hautement interactifs (EVHI).
 
-But du projet : Concevoir un jeu contenant une forme d'interaction autre que le clavier et la souris, prenant en compte la modélisation d'une des dimensions 
-de l'utilisateur (par exemple son stress, ses connaissances, son état émotionnel, son niveau de joueur) et prévoyant des formes d'adaptation 
-(soit dans le scénario, soit des agents dans la scène,...) qui tiennent compte de cette modélisation. Les traces seront donc collectées et analysées 
-pour la modélisation et l'interaction.
+But du projet : Concevoir un jeu hautement interactif contenant une forme d'interaction autre que le clavier et la souris, prenant en compte la modélisation d'une des dimensions de l'utilisateur (par exemple son stress, ses connaissances, son état émotionnel, son niveau de joueur) et prévoyant, grâce au machine learning, des formes d'adaptation (soit dans le scénario, soit des agents dans la scène,...) qui tiennent compte de cette modélisation et des données récoltées sur le joueur. Les traces seront donc collectées et analysées pour la modélisation et l'interaction.
 
 En prenant en considération ces directives, nous avons décidé de développer une application d’apprentissage de langue sous forme de série de questions
 de vocabulaire (sous forme de question à choix multiples (QCM) ou en demandant à l’utilisateur d’écrire la réponse en entier). 
