@@ -7,7 +7,7 @@ de l'utilisateur (par exemple son stress, ses connaissances, son état émotionn
 (soit dans le scénario, soit des agents dans la scène,...) qui tiennent compte de cette modélisation. Les traces seront donc collectées et analysées 
 pour la modélisation et l'interaction.
 
-En prennant en considération ces directives, nous avons décidé de développer une application d’apprentissage de langue sous forme de série de questions
+En prenant en considération ces directives, nous avons décidé de développer une application d’apprentissage de langue sous forme de série de questions
 de vocabulaire (sous forme de question à choix multiples (QCM) ou en demandant à l’utilisateur d’écrire la réponse en entier). 
 
 C’est un jeu sérieux destiné à toute personne voulant améliorer son vocabulaire en anglais. 
