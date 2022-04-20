@@ -9,11 +9,15 @@ pour la modélisation et l'interaction.
 
 En prennant en considération ces directives, nous avons décidé de développer une application d’apprentissage de langue sous forme de série de questions
 de vocabulaire (sous forme de question à choix multiples (QCM) ou en demandant à l’utilisateur d’écrire la réponse en entier). 
+
 C’est un jeu sérieux destiné à toute personne voulant améliorer son vocabulaire en anglais. 
+
 Ce jeu s'appuie sur la modélisation des connaissances de l'utilisateur (de vocabulaire et concernant la nature des mots en anglais), sur la modélisation du 
 comportement de l'utilisateur (oculaire, au niveau de sa vitesse de sélection et d’entrée de texte au clavier), sur la gestion de probabilités et de chaînes de 
 Markov cachées (Bayesian Knowledge Tracing) etc. afin d'adapter les questions posées à l'utilisateur et le contenu d'une fiche d’aide.
+
 Moteur de jeu utilisé : Unity.
+
 Forme d'interaction additionnelle : Oculomètre.
 
 Ce repository est constitué de plusieurs fichiers : EVHI-Projet_Build_FINAL est le dossier de build du projet, EVHI-Projet_Sources est le dossier de codes 
